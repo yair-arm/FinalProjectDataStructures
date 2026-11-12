@@ -1,0 +1,51 @@
+# RED OPTIMIZADA (ESCENARIO PROPUESTO - 3 CENTROS DE ACOPIO Y RED DE FRIO ESTRATEGICOS)
+# Se instalan 3 nodos A+F+M en las confluencias con mayor centralidad y riesgo de deterioro:
+#   1) D_Bocas_Manacacias -> Centro Acopio + Frio Bocas del Manacacias (cubre Yucao, Manacacias y Meta)
+#   2) D_Manacacias_Medio -> Centro Acopio + Frio Manacacias Sur-Medio (cubre Canalete, Planas, Guarrojo)
+#   3) P_Muco -> Centro Acopio + Frio Confluencia Muco-Meta (cubre Cano Morroco, Muco y La Ventura)
+# Ademas Puerto Gaitan consolida muelle + red de frio en cabecera municipal.
+
+N|P_Cano_Morroco|Cano Morroco / Alto Tomo|P|Rio Tomo|3|0|Zona extrema oriental conectada al acopio Muco-Meta
+N|P_Vichada|Sector Primavera (Alto Vichada)|P|Rio Vichada|2|0|Zona suroriental conectada via Planas-Manacacias
+N|P_Planas|Subcuenca Rio Planas|P|Rio Planas|6|0|Pesca artesanal en ruta corta a Acopio Manacacias
+N|P_Guarrojo|Subcuenca Rio Guarrojo|P|Rio Guarrojo|4|0|Pesca en ruta hacia Muco o Manacacias
+N|P_Muco|Acopio + Red Frio Muco-Meta|F|Rio Muco|7|1|NUEVO CENTRO DE ACOPIO Y FRIO (rescate tramo oriental)
+N|P_Meta_Ventura|Eje Rio Meta / La Ventura - San Miguel|P|Rio Meta|8|0|Desembarque rapido hacia Bocas o Muco
+N|P_Canalete_Maiciana|Canalute / Maiciana / Canalete|P|Rio Manacacias Sur|3|0|Cabecera sur del Manacacias
+N|P_Manacacias_Sur|Rio Manacacias Sur|P|Rio Manacacias|9|0|Tramo sur alimentador del Acopio Manacacias Medio
+N|D_Manacacias_Medio|Acopio + Red Frio Manacacias Medio|F|Rio Manacacias|14|1|NUEVO CENTRO DE ACOPIO Y FRIO (cubre cuenca media-sur)
+N|P_Yucao|Subcuenca Rio Yucao|P|Rio Yucao|18|0|Conectado en < 2h a Bocas del Manacacias
+N|P_Chaviva_PtoLopez|Sector Chaviva / Guira|P|Rio Metica - Yucao|4|0|Conectado en 90 min a Puerto Lopez
+N|D_Bocas_Manacacias|Acopio + Muelle + Frio Bocas Manacacias|F|Confluencia Meta|19|1|NUEVO CENTRO PRINCIPAL DE ACOPIO, MUELLE Y FRIO
+N|Puerto_Gaitan|Puerto Gaitan (Muelle + Red Frio + Venta)|V|Puerto Gaitan|28|1|Cabecera equipada con red de frio y despacho refrigerado
+N|Puerto_Lopez|Puerto Lopez (Centro Acopio Regional)|A|Puerto Lopez|4|1|Centro con hielo/conservacion hacia Villavicencio
+N|Villavicencio|Villavicencio (Centro Distribucion Regional)|V|Meta|1|1|Mercado regional con red de frio comercial
+N|Bogota|Bogota D.C. (Mercado Nacional)|V|Cundinamarca|1|1|Destino final de comercializacion nacional
+
+# Conexiones fluviales (mismas distancias reales; se anade conexion rapida Vichada->Manacacias Sur via enlace fluvial optimizado)
+E|P_Cano_Morroco|P_Meta_Ventura|210|52|Fluvial_Canoa
+E|P_Cano_Morroco|P_Muco|170|42|Fluvial_Canoa
+E|P_Vichada|P_Planas|160|40|Fluvial_Canoa
+E|P_Vichada|P_Guarrojo|185|46|Fluvial_Canoa
+E|P_Planas|P_Guarrojo|115|29|Fluvial_Canoa
+E|P_Planas|P_Manacacias_Sur|150|38|Fluvial_Canoa
+E|P_Guarrojo|P_Muco|120|30|Fluvial_Canoa
+E|P_Guarrojo|D_Manacacias_Medio|165|41|Fluvial_Canoa
+E|P_Muco|P_Meta_Ventura|110|28|Fluvial_Canoa
+E|P_Muco|D_Bocas_Manacacias|145|36|Fluvial_Canoa
+E|P_Meta_Ventura|D_Bocas_Manacacias|130|32|Fluvial_Canoa
+E|P_Meta_Ventura|Puerto_Gaitan|155|39|Fluvial_Canoa
+E|P_Canalete_Maiciana|P_Manacacias_Sur|140|35|Fluvial_Canoa
+E|P_Manacacias_Sur|D_Manacacias_Medio|115|29|Fluvial_Canoa
+E|D_Manacacias_Medio|D_Bocas_Manacacias|95|24|Fluvial_Canoa
+E|D_Manacacias_Medio|Puerto_Gaitan|125|31|Fluvial_Canoa
+E|P_Yucao|D_Bocas_Manacacias|105|26|Fluvial_Canoa
+E|P_Yucao|P_Chaviva_PtoLopez|135|34|Fluvial_Canoa
+E|P_Chaviva_PtoLopez|Puerto_Lopez|90|22|Fluvial_Canoa
+E|D_Bocas_Manacacias|Puerto_Gaitan|45|11|Fluvial_Canoa
+
+# Conexiones terrestres refrigeradas
+E|Puerto_Gaitan|Puerto_Lopez|105|110|Terrestre_Camion
+E|Puerto_Gaitan|Villavicencio|170|193|Terrestre_Camion
+E|Puerto_Lopez|Villavicencio|80|84|Terrestre_Camion
+E|Villavicencio|Bogota|150|110|Terrestre_Camion

@@ -1,0 +1,11 @@
+punto,cuenca,reportes,saltos_bfs_actual,tiempo_sin_frio_bfs_actual,primer_frio_actual,mejor_sin_frio_dfs_actual,estado_dfs_actual,rutas_totales_actual,rutas_optimas_actual,saltos_bfs_opt,tiempo_sin_frio_bfs_opt,primer_frio_opt,mejor_sin_frio_dfs_opt,estado_dfs_opt,rutas_totales_opt,rutas_optimas_opt,reduccion_tiempo_pct
+P_Cano_Morroco,Rio Tomo,3,3,470,Puerto_Lopez,360,OPTIMO,30,1,1,170,P_Muco,170,OPTIMO,30,24,63.83
+P_Vichada,Rio Vichada,2,4,580,Puerto_Lopez,475,ALERTA_BACTERIANA,72,0,2,305,P_Muco,305,OPTIMO,72,30,47.41
+P_Planas,Rio Planas,6,4,510,Puerto_Lopez,390,ALERTA_BACTERIANA,42,0,2,235,P_Muco,235,OPTIMO,42,42,53.92
+P_Guarrojo,Rio Guarrojo,4,3,395,Puerto_Lopez,290,OPTIMO,30,3,1,120,P_Muco,120,OPTIMO,30,30,69.62
+P_Muco,Rio Muco,7,3,370,Puerto_Lopez,190,OPTIMO,18,8,1,0,D_Bocas_Manacacias,0,OPTIMO,18,18,100.00
+P_Meta_Ventura,Rio Meta,8,2,260,Puerto_Lopez,155,OPTIMO,12,12,1,130,D_Bocas_Manacacias,130,OPTIMO,12,12,50.00
+P_Canalete_Maiciana,Rio Manacacias Sur,3,4,485,Puerto_Lopez,380,ALERTA_BACTERIANA,12,0,2,255,D_Manacacias_Medio,255,OPTIMO,12,12,47.42
+P_Manacacias_Sur,Rio Manacacias,9,3,345,Puerto_Lopez,240,OPTIMO,12,8,1,115,D_Manacacias_Medio,115,OPTIMO,12,12,66.67
+P_Yucao,Rio Yucao,18,2,225,Puerto_Lopez,150,OPTIMO,9,9,1,105,D_Bocas_Manacacias,105,OPTIMO,9,9,53.33
+P_Chaviva_PtoLopez,Rio Metica - Yucao,4,1,90,Puerto_Lopez,90,OPTIMO,3,3,1,90,Puerto_Lopez,90,OPTIMO,3,3,0.00

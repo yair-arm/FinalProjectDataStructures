@@ -1,0 +1,20 @@
+# Compilación y binarios C++
+*.o
+*.obj
+*.exe
+*.out
+*.ilk
+*.pdb
+build/
+compile_commands.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Archivos temporales y empaquetados
+*.rar
+*.zip
+~$*
+.DS_Store
+Thumbs.db
