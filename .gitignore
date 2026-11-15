@@ -1,21 +1,51 @@
-# Compilación y binarios C++
-*.o
-*.obj
-*.exe
-*.out
-*.ilk
-*.pdb
-build/
-compile_commands.json
-
-# Python
+# Archivos de Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyo
 *.pyc
 
-# Archivos temporales y empaquetados
-*.rar
-!Codigo_Proyecto_Final_Grafos.rar
-*.zip
-~$*
-.DS_Store
+# Entornos virtuales
+venv/
+env/
+.env/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operativo
 Thumbs.db
+.DS_Store
+desktop.ini
+
+# Distribución / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Pytest / Testing
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Datos generados
+data/output/*
+!data/output/.gitkeep
+!data/output/rutas_cache.json
+!data/output/mapa_interactivo.html
+!data/output/grafo_logistico.png
+!Codigo_Proyecto_Final_Grafos.rar
+
+# Logs
+*.log
+

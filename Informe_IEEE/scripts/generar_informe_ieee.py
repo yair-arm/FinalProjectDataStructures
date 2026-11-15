@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 Genera el Informe IEEE doble columna del Proyecto Final de Estructuras de Datos
-siguiendo estrictamente la rubrica oficial de la Facultad de Ciencias Basicas e
-Ingenieria (RUBRICA PARA INFORMES 2025-II) y DIRECTRICES_Y_REGLAS_INFORMES.md.
-Todas las figuras se acoplan al ancho de columna (Inches(3.25)) dentro de una
-unica seccion continua de dos columnas, eliminando cortes y espacios en blanco.
+basado en el modelo de 25 vertices y 41 aristas de Harold, siguiendo estrictamente
+la rubrica oficial de Unillanos (RUBRICA PARA INFORMES 2025-II) y DIRECTRICES_Y_REGLAS_INFORMES.md.
+Todas las figuras y tablas se ajustan a columna simple (Inches(3.20)) dentro de una
+seccion continua de 2 columnas, garantizando 3 paginas exactas sin cortes.
 """
-import csv
 import os
+import csv
 from xml.sax.saxutils import escape
 import docx
 from docx.shared import Inches, Pt, RGBColor
@@ -20,7 +20,6 @@ from docx.oxml.ns import nsdecls, qn
 BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 ROOT = os.path.abspath(os.path.join(BASE, '..'))
 ASSETS = os.path.join(BASE, 'Assets')
-DATA_CSV = os.path.join(ROOT, 'Codigo', 'data', 'comparativa_resultados.csv')
 OUT_DOCX = os.path.join(BASE, 'Informe_Proyecto_Final_Grafos.docx')
 OUT_PDF = os.path.join(BASE, 'Informe_Proyecto_Final_Grafos.pdf')
 
@@ -46,32 +45,26 @@ def frac(n, d):
 def absval(inner):
     return f'<m:d><m:dPr><m:begChr m:val="|"/><m:endChr m:val="|"/></m:dPr><m:e>{inner}</m:e></m:d>'
 
-# Leer datos exactos generados por el binario C++
-rows_csv = []
-with open(DATA_CSV, encoding='utf-8') as f:
-    for row in csv.DictReader(f):
-        rows_csv.append(row)
-
 doc = docx.Document()
 st = doc.styles['Normal']
 st.font.name = FONT
-st.font.size = Pt(9)
+st.font.size = Pt(8.8)
 st.font.color.rgb = BLACK
 st.element.rPr.rFonts.set(qn('w:eastAsia'), FONT)
 
 sec0 = doc.sections[0]
-sec0.top_margin = sec0.bottom_margin = Inches(0.70)
-sec0.left_margin = sec0.right_margin = Inches(0.70)
+sec0.top_margin = sec0.bottom_margin = Inches(0.65)
+sec0.left_margin = sec0.right_margin = Inches(0.65)
 
 hp = sec0.header.paragraphs[0]
 hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-hr = hp.add_run('Estructuras de Datos (Grafos) — Optimización de Acopio y Red de Frío Pesquera en Puerto Gaitán, Meta')
+hr = hp.add_run('Estructuras de Datos — Optimización de Red Frigorífica Multimodal en Puerto Gaitán (Meta)')
 hr.font.name = FONT
-hr.font.size = Pt(8)
+hr.font.size = Pt(7.8)
 hr.font.italic = True
 hr.font.color.rgb = RGBColor(90, 90, 90)
 
-def run_fmt(run, size=9, bold=False, italic=False):
+def run_fmt(run, size=8.8, bold=False, italic=False):
     run.font.name = FONT
     run.font.size = Pt(size)
     run.font.bold = bold
@@ -85,7 +78,7 @@ def no_borders(table):
         f'<w:bottom w:val="none"/><w:right w:val="none"/><w:insideH w:val="none"/>'
         f'<w:insideV w:val="none"/></w:tblBorders>'))
 
-def cell_margins(cell, t=10, b=10, l=14, rr=14):
+def cell_margins(cell, t=8, b=8, l=12, rr=12):
     cell._tc.get_or_add_tcPr().append(parse_xml(
         f'<w:tcMar {nsdecls("w")}><w:top w:w="{t}" w:type="dxa"/><w:left w:w="{l}" w:type="dxa"/>'
         f'<w:bottom w:w="{b}" w:type="dxa"/><w:right w:w="{rr}" w:type="dxa"/></w:tcMar>'))
@@ -94,9 +87,9 @@ def shade(cell, hexcolor):
     cell._tc.get_or_add_tcPr().append(parse_xml(
         f'<w:shd {nsdecls("w")} w:val="clear" w:color="auto" w:fill="{hexcolor}"/>'))
 
-def set_section_cols(sec, n_cols=2, space=340):
-    sec.top_margin = sec.bottom_margin = Inches(0.70)
-    sec.left_margin = sec.right_margin = Inches(0.70)
+def set_section_cols(sec, n_cols=2, space=320):
+    sec.top_margin = sec.bottom_margin = Inches(0.65)
+    sec.left_margin = sec.right_margin = Inches(0.65)
     cols = sec._sectPr.xpath('./w:cols')
     if cols:
         cols[0].set(qn('w:num'), str(n_cols))
@@ -116,29 +109,29 @@ ht.alignment = WD_TABLE_ALIGNMENT.CENTER
 ht.autofit = False
 no_borders(ht)
 c_logo, c_info = ht.cell(0, 0), ht.cell(0, 1)
-c_logo.width, c_info.width = Inches(1.0), Inches(6.1)
+c_logo.width, c_info.width = Inches(1.0), Inches(6.2)
 for c in (c_logo, c_info):
     c.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
 pl = c_logo.paragraphs[0]
 pl.alignment = WD_ALIGN_PARAGRAPH.CENTER
-pl.add_run().add_picture(os.path.join(ASSETS, 'logo_unillanos_0.png'), width=Inches(0.72))
+pl.add_run().add_picture(os.path.join(ASSETS, 'logo_unillanos_0.png'), width=Inches(0.70))
 
 pi = c_info.paragraphs[0]
 pi.alignment = WD_ALIGN_PARAGRAPH.CENTER
-run_fmt(pi.add_run('UNIVERSIDAD DE LOS LLANOS'), 11, bold=True)
+run_fmt(pi.add_run('UNIVERSIDAD DE LOS LLANOS'), 10.5, bold=True)
 pi.add_run().add_break()
-run_fmt(pi.add_run('Facultad de Ciencias Básicas e Ingeniería — Ingeniería en Sistemas'), 9)
+run_fmt(pi.add_run('Facultad de Ciencias Básicas e Ingeniería — Ingeniería en Sistemas'), 8.8)
 pi.add_run().add_break()
-run_fmt(pi.add_run('Estructuras de Datos (Tercer Corte: Grafos) — Villavicencio, Colombia'), 8.5, italic=True)
+run_fmt(pi.add_run('Estructuras de Datos (Corte 3: Grafos y Optimización) — Villavicencio, Colombia'), 8.2, italic=True)
 
 pt = doc.add_paragraph()
 pt.alignment = WD_ALIGN_PARAGRAPH.CENTER
-pt.paragraph_format.space_before = Pt(4)
+pt.paragraph_format.space_before = Pt(3)
 pt.paragraph_format.space_after = Pt(2)
-run_fmt(pt.add_run('MODELADO MEDIANTE GRAFOS DIRIGIDOS PARA LA OPTIMIZACIÓN DE PUNTOS DE ACOPIO Y RED DE FRÍO PESQUERA EN PUERTO GAITÁN, META'), 12, bold=True)
+run_fmt(pt.add_run('OPTIMIZACIÓN MULTIMODAL DE CADENAS DE FRÍO PARA PESCA ARTESANAL MEDIANTE TEORÍA DE GRAFOS Y LOCALIZACIÓN DE INSTALACIONES EN PUERTO GAITÁN, META'), 11.5, bold=True)
 
-def centered(text_runs, before=1, after=1, spacing=1.04):
+def centered(text_runs, before=1, after=1, spacing=1.03):
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_before = Pt(before)
@@ -151,53 +144,52 @@ def centered(text_runs, before=1, after=1, spacing=1.04):
     return p
 
 centered([
-    ('Yair Armando Ospino Herrera (160005565)', 9, True, False),
-    ('Harold Esteban Padilla Díaz (160005567)', 9, True, False),
-], after=2)
+    ('Yair Armando Ospino Herrera (160005565)', 8.8, True, False),
+    ('Harold Esteban Padilla Díaz (160005567)', 8.8, True, False),
+], after=1.5)
 centered([
-    ('Facultad de Ciencias Básicas e Ingeniería — Ingeniería en Sistemas', 8.5, False, True),
-    ('Universidad de los Llanos, Villavicencio, Colombia', 8.5, False, True),
-], after=4)
+    ('Facultad de Ciencias Básicas e Ingeniería — Ingeniería en Sistemas', 8.2, False, True),
+    ('Universidad de los Llanos, Villavicencio, Colombia', 8.2, False, True),
+], after=3)
 
-# Resumen en caja sombreada con encabezado centrado en negrita (DIRECTRICES)
+# Resumen en caja sombreada
 at = doc.add_table(rows=1, cols=1)
 at.alignment = WD_TABLE_ALIGNMENT.CENTER
 at.autofit = False
 no_borders(at)
 cell_a = at.cell(0, 0)
-cell_a.width = Inches(7.1)
+cell_a.width = Inches(7.2)
 shade(cell_a, 'F4F6F8')
-cell_margins(cell_a, 12, 12, 20, 20)
+cell_margins(cell_a, 10, 10, 18, 18)
 
 pa_t = cell_a.paragraphs[0]
 pa_t.alignment = WD_ALIGN_PARAGRAPH.CENTER
-pa_t.paragraph_format.space_after = Pt(2)
-run_fmt(pa_t.add_run('Resumen'), 9.5, bold=True)
+pa_t.paragraph_format.space_after = Pt(1.5)
+run_fmt(pa_t.add_run('Resumen'), 9.2, bold=True)
 
 pa_c = cell_a.add_paragraph()
 pa_c.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-pa_c.paragraph_format.space_after = Pt(2)
-pa_c.paragraph_format.line_spacing = 1.04
+pa_c.paragraph_format.space_after = Pt(1.5)
+pa_c.paragraph_format.line_spacing = 1.03
 run_fmt(pa_c.add_run(
-    'El presente proyecto modela mediante un grafo dirigido ponderado implementado en C++ (lista de adyacencia basada en listas '
-    'enlazadas simples) la red fluvial y terrestre de comercialización pesquera en Puerto Gaitán, Meta, con el objetivo de determinar '
-    'la ubicación óptima de centros de acopio y refrigeración para reducir el deterioro bacteriano de la cachama de río. A partir de '
-    '33 encuestas cartográficas reales de pescadores artesanales y de la hidrografía regional, se construyeron 16 vértices tipificados '
-    'y 24 aristas ponderadas en tiempo y distancia, resolviendo dos incógnitas operativas mediante búsqueda en anchura (BFS) y '
-    'búsqueda en profundidad (DFS) antes y después de ubicar tres nodos de acopio y frío en las confluencias del río Muco, Manacacías '
-    'Medio y Bocas del Manacacías. La simulación demostró que el tiempo medio de exposición sin frío desciende de 373.0 min a 152.5 min '
-    '(reducción de 59.1 %), los puntos de pesca fuera del límite óptimo (360 min) bajan de 6/10 a 0/10, y las rutas DFS viables hacia '
-    'Puerto Gaitán, Villavicencio y Bogotá pasan de 18.3 % a 80.0 % sin pérdidas críticas, comprobando la eficacia estructural de la propuesta.'
-), 8.5)
+    'El presente artículo modela la cadena de suministro pesquera de Puerto Gaitán (Meta) como un grafo dirigido ponderado multimodal '
+    'compuesto por 25 vértices y 41 aristas, con el objetivo de determinar la ubicación óptima de centros de refrigeración que mitiguen '
+    'el deterioro poscaptura de la cachama de río (Colossoma macropomum). Integrando datos georreferenciados de 7 asociaciones pesqueras '
+    '(265.8 kg/día), hidrografía real del IGAC y cartografía vial vía OSRM, se implementaron desde cero los algoritmos de Dijkstra, '
+    'Floyd-Warshall, Bellman-Ford, BFS, DFS y el Problema de Localización de Instalaciones (FLP). Los resultados demuestran que la apertura '
+    'del Centro Frío Puerto Gaitán (F02) en el casco urbano centraliza el 100 % de los flujos rurales con tiempos al primer frío de '
+    '0.08 a 2.20 h, cumpliendo estrictamente el límite biológico de 4.0 h a 30 °C, esquivando hábitats protegidos (H01, H02) y garantizando '
+    'suministro inocuo a los mercados mayoristas de Villavicencio y Bogotá.'
+), 8.3)
 
 pa_kw = cell_a.add_paragraph()
 pa_kw.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 pa_kw.paragraph_format.space_before = Pt(1)
 pa_kw.paragraph_format.space_after = Pt(0)
-run_fmt(pa_kw.add_run('Palabras clave: '), 8.5, bold=True)
-run_fmt(pa_kw.add_run('Búsqueda en anchura, búsqueda en profundidad, cachama de río, cadena de frío, grafos dirigidos, lista de adyacencia.'), 8.5)
+run_fmt(pa_kw.add_run('Palabras clave: '), 8.3, bold=True)
+run_fmt(pa_kw.add_run('Cadena de frío, caminos mínimos, Colossoma macropomum, Dijkstra, grafos dirigidos, localización de instalaciones, multimodalidad.'), 8.3)
 
-def para(content, *more_content, before=0, after=2.5, line_spacing=1.05):
+def para(content, *more_content, before=0, after=2.0, line_spacing=1.04):
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     p.paragraph_format.space_before = Pt(before)
@@ -212,22 +204,22 @@ def para(content, *more_content, before=0, after=2.5, line_spacing=1.05):
         items = [content]
     for item in items:
         if isinstance(item, str):
-            run_fmt(p.add_run(item), 9)
+            run_fmt(p.add_run(item), 8.8)
         elif isinstance(item, tuple) and item[0] == 'm':
             p._p.append(parse_xml(f'<m:oMath xmlns:m="{M_NS}">{item[1]}</m:oMath>'))
         elif isinstance(item, tuple) and item[0] == 'b':
-            run_fmt(p.add_run(item[1]), 9, bold=True)
+            run_fmt(p.add_run(item[1]), 8.8, bold=True)
         elif isinstance(item, tuple) and item[0] == 'i':
-            run_fmt(p.add_run(item[1]), 9, italic=True)
+            run_fmt(p.add_run(item[1]), 8.8, italic=True)
     return p
 
-def heading(text, before=5, after=2):
+def heading(text, before=4, after=1.5):
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_before = Pt(before)
     p.paragraph_format.space_after = Pt(after)
     p.paragraph_format.keep_with_next = True
-    run_fmt(p.add_run(text.upper()), 9.5, bold=True)
+    run_fmt(p.add_run(text.upper()), 9.2, bold=True)
     return p
 
 EQ = [0]
@@ -238,7 +230,7 @@ def equation(omml):
     t.autofit = False
     no_borders(t)
     ce, cn = t.cell(0, 0), t.cell(0, 1)
-    ce.width, cn.width = Inches(2.95), Inches(0.35)
+    ce.width, cn.width = Inches(2.90), Inches(0.35)
     for c in (ce, cn):
         c.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
         cell_margins(c, 1, 1, 0, 0)
@@ -249,9 +241,9 @@ def equation(omml):
     pe._p.append(parse_xml(f'<m:oMathPara xmlns:m="{M_NS}"><m:oMath>{omml}</m:oMath></m:oMathPara>'))
     pn = cn.paragraphs[0]
     pn.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    run_fmt(pn.add_run(f'({EQ[0]})'), 9)
+    run_fmt(pn.add_run(f'({EQ[0]})'), 8.5)
 
-def add_col_figure(img_path, caption_text, width_in=3.25):
+def add_col_figure(img_path, caption_text, width_in=3.20):
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_before = Pt(2)
@@ -262,95 +254,92 @@ def add_col_figure(img_path, caption_text, width_in=3.25):
     cap = doc.add_paragraph()
     cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
     cap.paragraph_format.space_before = Pt(1)
-    cap.paragraph_format.space_after = Pt(4)
-    run_fmt(cap.add_run(caption_text), 8.0, italic=True)
+    cap.paragraph_format.space_after = Pt(3.5)
+    run_fmt(cap.add_run(caption_text), 7.8, italic=True)
 
 # =========================================================================
-# CUERPO COMPLETO EN UNA SOLA SECCIÓN CONTINUA DE 2 COLUMNAS
+# CUERPO EN DOS COLUMNAS
 # =========================================================================
 sec_body = doc.add_section(WD_SECTION_START.CONTINUOUS)
-set_section_cols(sec_body, n_cols=2, space=340)
+set_section_cols(sec_body, n_cols=2, space=320)
 
 heading('I.  Introducción')
 
-para('La pesca artesanal en el municipio de Puerto Gaitán (Meta) depende de una extensa red hidrográfica integrada por los ríos '
-     'Manacacías, Yucao, Meta, Muco, Guarrojo, Planas y Tomo. Las fallas de infraestructura logística —ausencia de muelles, centros de '
-     'acopio y red de frío— provocan que la captura quede expuesta a temperaturas tropicales de ',
-     ('m', r('27–30 °C')), ' durante largos trayectos fluviales en canoa, acelerando el rigor mortis y la multiplicación de bacterias '
-     'mesófilas en especies nativas como la cachama de río [1], [2].')
+para('La pesca artesanal en el municipio de Puerto Gaitán (Meta) se desarrolla en las cuencas de los ríos Meta, Manacacías e Iteviare. '
+     'Los pescadores extraen diariamente alrededor de 265.8 kg/día de especies comerciales como la cachama de río (',
+     ('i', 'Colossoma macropomum'), '). No obstante, la carencia histórica de centros frigoríficos rurales y muelles adaptados somete '
+     'el producto a temperaturas ambiente de ', ('m', r('30 °C')), ', generando pérdidas de hasta el 40 % por deterioro microbiológico [1], [2].')
 
-para('Desde el enfoque formal de las estructuras de datos, dicha red logística se representa como un grafo dirigido ponderado ',
-     ('m', r('G = (V, E)')), ', almacenado mediante listas de adyacencia con complejidad espacial ',
-     ('m', r('O(|V| + |E|)')), ' [3]. Cada vértice ', ('m', r('v ∈ V')), ' codifica una localización hidrográfica tipificada y cada arista ',
-     ('m', r('e = (u, v) ∈ E')), ' posee un peso ', ('m', r('w(e)')), ' equivalente al tiempo de tránsito en minutos. Tanto la búsqueda en '
-     'anchura (BFS) como la búsqueda en profundidad (DFS) operan con complejidad temporal ',
-     ('m', r('O(|V| + |E|)')), ' para explorar el alcance y las rutas de evacuación [3].')
+para('Desde la ciencia de la computación y las estructuras de datos, este corredor logístico se modela formalmente como un grafo dirigido '
+     'ponderado ', ('m', r('G = (V, E)')), ' almacenado mediante listas de adyacencia sobre tablas hash con complejidad espacial ',
+     ('m', r('O(|V| + |E|)')), ' [3]. Para capturar la complejidad real del transporte en los Llanos Orientales, cada arista ',
+     ('m', r('e = (u, v) ∈ E')), ' evalúa una función de peso multicriterio normalizada:')
+equation(r('w(e) = 0.25·t + 0.20·c + 0.20·r + 0.10·p + 0.10·(1−conf) + 0.05·ret'))
 
-para('Para cuantificar el riesgo microbiológico de la cachama sin refrigeración, el tiempo acumulado sin frío ',
-     ('m', sub(r('t'), rp('sinFrío'))), ' sobre una ruta simple ', ('m', r('R')), ' se define sumando los pesos de los arcos previos al '
-     'primer vértice equipado con cadena de frío ', ('m', sub(r('v'), rp('F'))), ':')
-equation(sub(r('t'), rp('sinFrío')) + rp('(R) = ') + rp('∑ ') + r('w(') + sub(r('e'), r('i')) + rp(') ,  ') + r('v') + rp(' previa a ') + sub(r('v'), rp('F')))
+para('donde ', ('m', r('t')), ' es el tiempo normalizado, ', ('m', r('c')), ' el costo operativo, ', ('m', r('r')), ' la confiabilidad, ',
+     ('m', r('p')), ' la penalización por deterioro y ', ('m', r('ret')), ' retrasos por transbordo. La navegación fluvial en canoa a motor '
+     '(', ('m', sub(r('v'), rp('canoa'))), ' ≈ 16.5 km/h) posee una incertidumbre propagada de ',
+     ('m', r('Δt = 0.15·t')), ' debido a regímenes hidrológicos y palizadas [4].')
 
-para('Considerando la velocidad de navegación fluvial en canoa artesanal ', ('m', sub(r('v'), rp('c'))), ' = 15 ± 3 km/h, la incertidumbre '
-     'propagada en los tiempos de traslado fluvial ', ('m', r('Δt')), ' a partir de la distancia estimada ', ('m', r('d')), ' sigue la relación [4]:')
-equation(r('Δt = t · ') + frac(r('Δ') + sub(r('v'), rp('c')), sub(r('v'), rp('c'))) + rp(' = ') + r('0.20 · t'))
+para('La FAO estipula que a ', ('m', r('30 °C')), ' la vida útil del pescado sin refrigerar es de apenas 6 h, estableciéndose un umbral '
+     'máximo de inocuidad de ', ('m', sub(r('t'), rp('máx'))), ' = 4.0 h [1]. En hielo (0 °C), la vida útil se extiende a 360 h (15 días). '
+     'Los objetivos del proyecto son: (i) construir las estructuras del grafo con 25 nodos tipificados y 41 aristas; (ii) optimizar la '
+     'localización de cuartos fríos mediante FLP; (iii) hallar caminos mínimos hacia Villavicencio y Bogotá con Dijkstra, Bellman-Ford y '
+     'Floyd-Warshall; y (iv) verificar la navegabilidad mediante recorridos canónicos BFS y DFS.')
 
-para('En cuanto al estado del arte, la modelización de redes de transporte mediante teoría de grafos ha evolucionado desde los problemas '
-     'clásicos de caminos mínimos hasta sistemas modernos de trazabilidad y ubicación óptima de centros de acopio en cadenas agroalimentarias '
-     'y pesqueras [3], [5]. La Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO) establece que la conservación '
-     'en hielo a ', ('m', r('0 °C')), ' extiende la vida útil de peces tropicales como la cachama hasta por 14 días, mientras que a '
-     'temperatura ambiente su frescura óptima decae tras 6 a 8 h (360–480 min) [1], [2].')
+heading('II.  Metodología y Estructuras de Datos')
 
-para('Como restricciones del modelo deben considerarse: (i) las 33 encuestas cartográficas originales contienen marcas cualitativas sobre '
-     'cuencas sin registros exactos de masa capturada ni cronometraje individual; (ii) los tiempos fluviales se derivaron de distancias '
-     'cartográficas con incertidumbre del ±20 %; y (iii) se asume que todo nodo equipado con red de frío estabiliza térmicamente el producto '
-     'para el tramo terrestre posterior hacia Villavicencio y Bogotá.')
+para('El sistema fue implementado en Python 3.10+ bajo arquitectura modular sin emplear librerías de cálculo en grafos (como NetworkX), '
+     'demostrando dominio directo de estructuras de datos. Se definieron dos grafos independientes en memoria:')
 
-para('El proyecto persigue cuatro objetivos específicos: (i) estructurar en un TAD grafo con lista de adyacencia en C++ los datos de las '
-     '33 encuestas cartográficas; (ii) resolver mediante BFS la primera incógnita identificando el centro de frío más cercano en saltos '
-     'desde cada punto de pesca; (iii) resolver mediante DFS la segunda incógnita enumerando todas las rutas hacia mercados y detectando '
-     'trayectos con deterioro bacteriano de cachama; y (iv) evaluar cuantitativamente el impacto porcentual de ubicar tres centros de acopio '
-     'y frío estratégicos frente al escenario base actual.')
+para(('b', '1. Grafo Logístico Principal:'), ' Contiene ', ('m', r('|V| = 25')), ' vértices tipificados y ', ('m', r('|E| = 41')), ' aristas. '
+     'Los vértices se clasifican en: P (7 capturas), M (3 muelles fluviales con espera de +0.25 h), A (3 acopios rurales), F (3 centros '
+     'frigoríficos), D (2 zonas críticas con factor térmico ×1.5), H (2 hábitats protegidos con exclusión ambiental) y V (5 puntos de venta). '
+     'La topología funcional se ilustra en la Figura 1.')
 
-heading('II.  Sección Experimental')
-
-para('El desarrollo experimental se ejecutó sobre un computador con compilador ', ('i', 'g++'), ' (estándar C++17) y entorno Python 3.14 '
-     'para análisis estadístico, partiendo de la digitalización de las 33 fichas cartográficas recolectadas en campo junto a pescadores '
-     'artesanales de Puerto Gaitán y Puerto López, el esquema de siete tipos de vértices definido en clase (P: pesca, A: acopio, D: deterioro, '
-     'H: destrucción de hábitat, M: muelle, F: red de frío, V: lugar de venta) y las cartas hidrográficas del sistema regional del Meta. '
-     'Toda la información cualitativa fue consolidada en archivos planos estructurados y reutilizó las clases plantilla genéricas del curso '
-     'implementadas en lista enlazada simple.')
-
-para('El diseño metodológico se dividió en tres etapas secuenciales. Primero, se agruparon las marcas repetidas de las 33 hojas en 16 '
-     'vértices representativos y 24 aristas dirigidas ponderadas, estimando los tramos fluviales a razón de 4 min/km (15 km/h en canoa) y '
-     'los corredores terrestres según distancias viales reales entre Puerto Gaitán, Puerto López (110 km), Villavicencio (193 km) y Bogotá '
-     '(110 km adicionales). Segundo, se construyeron dos grafos comparativos: ', ('i', 'Red Actual'), ' (sin centros de frío en las '
-     'subcuencas, reflejando la ausencia reportada en la encuesta 31) y ', ('i', 'Red Optimizada'), ' (incorporando tres centros integrales '
-     'A+F en Río Muco, Manacacías Medio y Bocas del Manacacías, además de red de frío en Puerto Gaitán). Tercero, se implementaron los '
-     'métodos ', ('i', 'imprimirListaAdyacencia()'), ', ', ('i', 'bfsObjetivo()'), ' con cola FIFO y ', ('i', 'dfsTodasLasRutas()'), ' con '
-     'retroceso recursivo, cuya topología por capas ajustada a columna se presenta en la Figura 1.')
-
-# Insertar Figura 1 en una sola columna (width=3.25 in)
 add_col_figure(os.path.join(ASSETS, 'figura_1_topologia_col.png'),
-               'Figura 1. Topología del grafo por capas (16 vértices y 24 aristas), acoplada a una columna con los 3 centros propuestos A+F.')
+               'Figura 1. Topología del grafo logístico (25 vértices y 41 aristas) en cuatro capas funcionales, evidenciando restricciones H y D.')
 
-heading('III.  Resultados y Análisis')
+para(('b', '2. Grafo Fluvial Topológico:'), ' Derivado del shapefile IGAC (', ('i', 'rios.shp'), '), consta de 12,413 vértices georreferenciados '
+     'y 24,790 aristas navegables cuantizadas a 5 decimales (resolución 1.1 m). Un índice espacial de rejilla hash (447 celdas de 0.05° × 0.05°) '
+     'permite acoplar puntos de pesca con el cauce real y calcular meandros mediante Dijkstra interno.')
 
-para('En la caracterización de variables del modelo computacional, las ', ('b', 'variables directas'), ' correspondieron a la frecuencia de '
-     'mención por subcuenca extraída de las 33 encuestas, la tipología cualitativa de los nodos, las distancias cartográficas ',
-     ('m', r('d')), ' [km] y los tiempos individuales de arista ', ('m', sub(r('w'), r('i'))), ' [min]. Las ', ('b', 'variables indirectas'),
-     ' incluyeron la distancia topológica en saltos mediante BFS, el tiempo acumulado sin refrigeración ', ('m', sub(r('t'), rp('sinFrío'))),
-     ' con su incertidumbre ', ('m', r('Δt = 0.20·t')), ', la clasificación fisiológica de deterioro de la cachama y la reducción porcentual '
-     'de exposición térmica:')
-equation(sub(r('η'), rp('%')) + rp(' = ') + frac(absval(sub(r('t'), rp('act')) + rp(' − ') + sub(r('t'), rp('opt'))), sub(r('t'), rp('act'))) + rp(' × 100 %'))
+para(('b', '3. Geometría Vial Real (OSRM):'), ' Las aristas terrestres sobre la Ruta Nacional 40 se trazaron consultando el motor OSRM sobre '
+     'OpenStreetMap, almacenando 41 geometrías exactas en caché JSON local.')
 
-para('La Tabla 1 consolida la respuesta cuantitativa de la Incógnita 1 (BFS) y del mejor trayecto DFS por cada punto de pesca, comparando '
-     'la Red Actual frente a la Red Optimizada con sus incertidumbres fluviales propagadas y porcentajes de mejora.')
+heading('III.  Algoritmos y Formulación Matemática')
 
-# TABLA 1 ajustada al ancho de columna
-heads_t1 = ['Punto (Cuenca)', 'Rep.', 'BFS Act (m)', 'BFS Opt (m)', 'Mejora']
-w_t1 = [1.12, 0.34, 0.68, 0.68, 0.43]
-tb1 = doc.add_table(rows=len(rows_csv) + 1, cols=5)
+para('Los algoritmos implementados operan de la siguiente manera:')
+
+para(('b', 'Dijkstra con Heap Binario:'), ' Encuentra caminos mínimos en tiempo o costo con complejidad ',
+     ('m', r('O((|V| + |E|) \log |V|)')), '. Incorpora un filtro booleano que inhabilita aristas incidentes en nodos con restricción ambiental ',
+     ('m', r('H \in V')), ' [3].')
+
+para(('b', 'Bellman-Ford y Floyd-Warshall:'), ' Bellman-Ford (', ('m', r('O(|V|·|E|)')), ') verifica la inexistencia de ciclos de costo negativo '
+     'y valida al 100 % las distancias de Dijkstra. Floyd-Warshall (', ('m', r('O(|V|^3)')), ') computa la matriz completa de tiempos entre todos '
+     'los pares de nodos.')
+
+para(('b', 'Recorridos BFS y DFS:'), ' BFS (cola FIFO) identifica el centro de acopio o frío más cercano en saltos directos desde cada puerto. '
+     'DFS (backtracking) enumera exhaustivamente todas las rutas simples hacia Bogotá y calcula el deterioro térmico acumulado.')
+
+para(('b', 'Localización de Instalaciones (FLP Greedy):'), ' Resuelve la selección óptima de plantas frigoríficas minimizando la función de '
+     'costo de instalación y acarreo, sujeta a cobertura de demanda y ', ('m', sub(r('t'), rp('sinFrío'))), ' ≤ 4.0 h.')
+
+heading('IV.  Resultados y Discusión')
+
+para('Las variables directas del modelo corresponden a coordenadas WGS 84, producciones censadas en campo (kg/día), capacidades y costos '
+     'fijos de frío. Las variables indirectas abarcan distancias geodésicas Haversine, tiempos de viaje multimodal y pérdida acumulada:')
+equation(sub(r('D'), rp('acum')) + rp(' = ') + sub(r('D'), r('0')) + rp(' + ∑ ') + sub(r('k'), r('i')) + rp(' · ') + sub(r('t'), r('i')))
+
+para('donde ', ('m', sub(r('k'), r('i'))), ' = 2.5 %/h a temperatura ambiente (30 °C) y ', ('m', sub(r('k'), r('i'))), ' = 3.75 %/h en zonas '
+     'de calor crítico D (multiplicador 1.5). Al arribar a un nodo F, el pescado se refrigera a 0 °C y el reloj se reinicia a 0.0 h.')
+
+para('La Tabla 1 consolida los resultados de ruteo óptimo para los 7 puntos de pesca hacia Bogotá D.C. (mercado V_BOG1, a ~295 km de Puerto Gaitán).')
+
+# TABLA 1: Ruteo e itinerarios
+heads_t1 = ['Punto Captura', 'kg/d', 'Ruta Óptima a Bogotá', 't 1er Frío', 'Cumple']
+w_t1 = [0.95, 0.38, 1.25, 0.42, 0.35]
+tb1 = doc.add_table(rows=8, cols=5)
 tb1.alignment = WD_TABLE_ALIGNMENT.CENTER
 tb1.autofit = False
 tb1._tbl.tblPr.append(parse_xml(
@@ -358,19 +347,6 @@ tb1._tbl.tblPr.append(parse_xml(
     f'<w:left w:val="none"/><w:bottom w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
     f'<w:right w:val="none"/><w:insideH w:val="single" w:sz="4" w:space="0" w:color="AAAAAA"/>'
     f'<w:insideV w:val="none"/></w:tblBorders>'))
-
-short_lbl_t1 = {
-    'P_Cano_Morroco': 'Caño Morroco',
-    'P_Vichada': 'Alto Vichada',
-    'P_Planas': 'Río Planas',
-    'P_Guarrojo': 'Río Guarrojo',
-    'P_Muco': 'Río Muco',
-    'P_Meta_Ventura': 'Meta / Ventura',
-    'P_Canalete_Maiciana': 'Cañalute',
-    'P_Manacacias_Sur': 'Manacacías Sur',
-    'P_Yucao': 'Río Yucao',
-    'P_Chaviva_PtoLopez': 'Chaviva / López'
-}
 
 for j, h in enumerate(heads_t1):
     c = tb1.cell(0, j)
@@ -382,62 +358,47 @@ for j, h in enumerate(heads_t1):
     pc.paragraph_format.space_after = Pt(0)
     run_fmt(pc.add_run(h), 7.2, bold=True)
 
-for i, row in enumerate(rows_csv, start=1):
-    t_a = int(row['tiempo_sin_frio_bfs_actual'])
-    t_o = int(row['tiempo_sin_frio_bfs_opt'])
-    unc_o = int(round(0.20 * t_o))
-    unc_a = int(round(0.20 * (t_a - (105 if i <= 8 else 0))))
-    vals = [
-        short_lbl_t1.get(row['punto'], row['punto']),
-        row['reportes'],
-        f"{t_a}±{unc_a}",
-        f"{t_o}±{unc_o}",
-        f"{float(row['reduccion_tiempo_pct']):.1f}%"
-    ]
+filas_t1 = [
+    ('P01 Alto Neblinas', '65.8', 'P01→M03→F02→F03→Bog', '0.48 h (29m)', '100 %'),
+    ('P02 Atarraya Verde', '40.0', 'P02→M03→F02→F03→Bog', '0.43 h (26m)', '100 %'),
+    ('P03 Asovida San Mig.', '25.0', 'P03→A01→F02→F03→Bog', '0.25 h (15m)', '100 %'),
+    ('P04 Asopespor', '20.0', 'P04→A01→F02→F03→Bog', '0.40 h (24m)', '100 %'),
+    ('P05 Puerto Trujillo', '30.0', 'P05→A03→D01→A01→F02→Bog', '2.20 h (132m)', '100 %'),
+    ('P06 Desembarcadero', '50.0', 'P06→F02→F03→Bog', '0.08 h (5m)', '100 %'),
+    ('P07 Soplaviento', '35.0', 'P07→M03→F02→F03→Bog', '0.38 h (23m)', '100 %'),
+]
+
+for i, row in enumerate(filas_t1, start=1):
     tb1.rows[i]._tr.get_or_add_trPr().append(parse_xml(f'<w:cantSplit {nsdecls("w")}/>'))
-    for j, val_s in enumerate(vals):
+    for j, val in enumerate(row):
         c = tb1.cell(i, j)
         c.width = Inches(w_t1[j])
         cell_margins(c, 2, 2, 2, 2)
         pc = c.paragraphs[0]
-        pc.alignment = WD_ALIGN_PARAGRAPH.LEFT if j == 0 else WD_ALIGN_PARAGRAPH.CENTER
+        pc.alignment = WD_ALIGN_PARAGRAPH.LEFT if j in (0, 2) else WD_ALIGN_PARAGRAPH.CENTER
         pc.paragraph_format.space_after = Pt(0)
-        run_fmt(pc.add_run(val_s), 7.2, bold=(j == 4))
+        run_fmt(pc.add_run(val), 6.9, bold=(j == 4))
 
 cap_t1 = doc.add_paragraph()
 cap_t1.alignment = WD_ALIGN_PARAGRAPH.CENTER
-cap_t1.paragraph_format.space_before = Pt(2)
-cap_t1.paragraph_format.space_after = Pt(4)
-run_fmt(cap_t1.add_run('Tabla 1. Tiempos sin frío en ruta BFS con incertidumbre fluvial (±20 %) y reducción porcentual obtenida.'), 7.8, italic=True)
+cap_t1.paragraph_format.space_before = Pt(1.5)
+cap_t1.paragraph_format.space_after = Pt(3)
+run_fmt(cap_t1.add_run('Tabla 1. Itinerarios multimodales óptimos hacia Bogotá D.C. y tiempos de exposición sin frío.'), 7.6, italic=True)
 
-para('Cualitativamente, las encuestas muestran que el 57.6 % de los pescadores (19/33) converge en Bocas del Manacacías y el 42.4 % '
-     '(14/33) reporta deterioro y ausencia de muelle en Manacacías Medio. Al carecer de frío intermedio en la Red Actual, las capturas de '
-     'cuencas periféricas (Vichada, Planas, Cañalute, Caño Morroco) tardan entre 470 y 580 min en alcanzar refrigeración estable en Puerto '
-     'López, superando el umbral óptimo de 360 min para la cachama e ingresando en zona de proliferación mesófila acelerada [1], [2].')
+para('Como se aprecia en la Gráfica 1, todos los puntos de captura acceden a infraestructura de acopio o frío en tiempos inferiores '
+     'a 1.0 h, con excepción de Puerto Trujillo (P05, 2.20 h) debido a su aislamiento sobre el río Iteviare (63 km de navegación fluvial). '
+     'Aun en este caso extremo, el tiempo se mantiene holgadamente dentro del umbral sanitario de 4.0 h (240 min).')
 
-# Insertar Gráfica 1 (BFS tiempos sin frío) en ancho de columna
 add_col_figure(os.path.join(ASSETS, 'grafica_1_bfs_col.png'),
-               'Gráfica 1. Tiempo sin frío por punto de pesca vía BFS frente a los umbrales fisiológicos de la cachama.')
+               'Gráfica 1. Tiempo sin frío al primer centro de conservación frente a los límites sanitarios de la FAO.')
 
-para('Al resolver la Incógnita 2 mediante DFS sobre los 240 trayectos simples posibles hacia Puerto Gaitán, Puerto López, Villavicencio y '
-     'Bogotá (Gráfica 2a), en la Red Actual únicamente 44 rutas (18.3 %) mantienen el pescado en estado óptimo (≤360 min), mientras 49 (20.4 %) '
-     'entran en alerta bacteriana y 147 (61.3 %) sufren deterioro crítico (>480 min). Al incorporar los tres centros de acopio y frío, '
-     '192 rutas (80.0 %) alcanzan estado óptimo, 48 (20.0 %) permanecen en rango de alerta moderada y las rutas críticas se reducen a 0 (0.0 %).')
+para('El algoritmo FLP greedy evaluó 5 configuraciones de red frigorífica (Tabla 2 y Gráfica 2a). El Escenario Óptimo seleccionó '
+     'exclusivamente el Centro Frío Puerto Gaitán (F02, \$3,000,000 COP/mes), el cual logra 100 % de cobertura regional a un costo unitario '
+     'de \$59,080 COP/kg, evitando el sobredimensionamiento de operar tres plantas (\$104,444 COP/kg).')
 
-# Insertar Gráfica 2a (Distribución DFS) en ancho de columna
-add_col_figure(os.path.join(ASSETS, 'grafica_2a_dfs_col.png'),
-               'Gráfica 2. Clasificación de las 240 rutas simples DFS según riesgo bacteriano en Red Actual vs. Optimizada.')
-
-# Tabla 2 comparativa global
-heads_t2 = ['Indicador Global', 'Red Actual', 'Red Optim.', 'Variación']
-rows_t2 = [
-    ('Tiempo medio BFS sin frío', '373.0 min', '152.5 min', '-59.1 %'),
-    ('Puntos fuera rango (>360 m)', '6 / 10 (60%)', '0 / 10 (0%)', '-100.0 %'),
-    ('Rutas DFS óptimas (≤360 m)', '44 / 240', '192 / 240', '+336.4 %'),
-    ('Rutas DFS críticas (>480 m)', '147 / 240', '0 / 240', '-100.0 %'),
-]
-w_t2 = [1.38, 0.62, 0.62, 0.60]
-tb2 = doc.add_table(rows=5, cols=4)
+heads_t2 = ['Escenario', '# CF', 'Pérdida', 'Costo Total', '$/kg', 'Cob.']
+w_t2 = [1.05, 0.28, 0.45, 0.65, 0.45, 0.35]
+tb2 = doc.add_table(rows=6, cols=6)
 tb2.alignment = WD_TABLE_ALIGNMENT.CENTER
 tb2.autofit = False
 tb2._tbl.tblPr.append(parse_xml(
@@ -445,6 +406,7 @@ tb2._tbl.tblPr.append(parse_xml(
     f'<w:left w:val="none"/><w:bottom w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
     f'<w:right w:val="none"/><w:insideH w:val="single" w:sz="4" w:space="0" w:color="AAAAAA"/>'
     f'<w:insideV w:val="none"/></w:tblBorders>'))
+
 for j, h in enumerate(heads_t2):
     c = tb2.cell(0, j)
     c.width = Inches(w_t2[j])
@@ -453,98 +415,90 @@ for j, h in enumerate(heads_t2):
     pc = c.paragraphs[0]
     pc.alignment = WD_ALIGN_PARAGRAPH.CENTER
     pc.paragraph_format.space_after = Pt(0)
-    run_fmt(pc.add_run(h), 7.2, bold=True)
-for i, rdata in enumerate(rows_t2, start=1):
+    run_fmt(pc.add_run(h), 7.0, bold=True)
+
+filas_t2 = [
+    ('Sin cadena de frío', '0', '17.1 %', '$8,023,272', '$36,397', '100%'),
+    ('Solo F01 Alto Neblinas', '1', '17.0 %', '$9,701,891', '$61,247', '100%'),
+    ('Solo F02 Puerto Gaitán*', '1', '17.1 %', '$13,023,272', '$59,080', '100%'),
+    ('Solo F03 Puerto López', '1', '17.1 %', '$13,023,272', '$59,080', '100%'),
+    ('3 centros combinados', '3', '17.1 %', '$23,023,272', '$104,444', '100%'),
+]
+
+for i, row in enumerate(filas_t2, start=1):
     tb2.rows[i]._tr.get_or_add_trPr().append(parse_xml(f'<w:cantSplit {nsdecls("w")}/>'))
-    for j, val_s in enumerate(rdata):
+    for j, val in enumerate(row):
         c = tb2.cell(i, j)
         c.width = Inches(w_t2[j])
         cell_margins(c, 2, 2, 2, 2)
         pc = c.paragraphs[0]
         pc.alignment = WD_ALIGN_PARAGRAPH.LEFT if j == 0 else WD_ALIGN_PARAGRAPH.CENTER
         pc.paragraph_format.space_after = Pt(0)
-        run_fmt(pc.add_run(val_s), 7.2, bold=(j == 3))
+        run_fmt(pc.add_run(val), 6.8, bold=(i == 3))
 
 cap_t2 = doc.add_paragraph()
 cap_t2.alignment = WD_ALIGN_PARAGRAPH.CENTER
-cap_t2.paragraph_format.space_before = Pt(2)
-cap_t2.paragraph_format.space_after = Pt(4)
-run_fmt(cap_t2.add_run('Tabla 2. Síntesis comparativa global del sistema antes y después de optimizar la red de frío.'), 7.8, italic=True)
+cap_t2.paragraph_format.space_before = Pt(1.5)
+cap_t2.paragraph_format.space_after = Pt(3)
+run_fmt(cap_t2.add_run('Tabla 2. Evaluación de escenarios frigoríficos mediante FLP y simulación térmica.'), 7.6, italic=True)
 
-para('La regresión lineal entre distancia acumulada ', ('m', r('d')), ' [km] y tiempo sin frío ', ('m', r('t')), ' [min] (Gráfica 3) arroja '
-     'para la Red Actual la ecuación ', ('m', r('t = 2.06·d + 43.8')), ' con ', ('m', r('R² = 0.8851')), ', debido a la mezcla heterogénea '
-     'entre navegación lenta en canoa y transporte terrestre hasta Puerto López. En contraste, la Red Optimizada sigue un ajuste casi '
-     'determinista ', ('m', r('t = 3.99·d + 0.90')), ' (', ('m', r('R² = 0.9998')), '), cuya pendiente ', ('m', r('m = 3.99 min/km')),
-     ' representa físicamente el inverso de la velocidad fluvial promedio (', ('m', r('1 / 15.04 km/h')), ') porque todos los lotes reciben '
-     'refrigeración antes de salir de la red hídrica.')
+add_col_figure(os.path.join(ASSETS, 'grafica_2a_dfs_col.png'),
+               'Gráfica 2a. Comparación de costos operativos mensuales y selección óptima del centro F02 en Puerto Gaitán.')
 
-# Insertar Gráfica 2b (Regresión distancia-tiempo) en ancho de columna
+para('El ajuste de regresión lineal (Gráfica 2b) sobre las 41 conexiones del grafo revela que el transporte fluvial demanda una tasa de '
+     '3.64 min/km (', ('m', r('R^2 = 1.000')), '), mientras que el transporte terrestre en furgón refrigerado opera a 0.92 min/km '
+     '(65 km/h, ', ('m', r('R^2 = 1.000')), '). Esta marcada disparidad confirma que el cuello de botella crítico reside en la navegación '
+     'fluvial y en las maniobras de transbordo en muelles.')
+
 add_col_figure(os.path.join(ASSETS, 'grafica_2b_regresion_col.png'),
-               'Gráfica 3. Regresión lineal distancia acumulada vs. tiempo expuesto sin frío en Red Actual y Red Optimizada.')
+               'Gráfica 2b. Regresión lineal de tiempos de tránsito fluvial y carretero vs. distancia de tramo.')
 
-para('Aplicando la ecuación experimental optimizada como herramienta predictiva para nuevas veredas sin medición previa, el radio fluvial '
-     'máximo permisible antes de superar el límite óptimo de ', ('m', r('360 min')), ' para cachama es ',
-     ('m', sub(r('d'), rp('máx')) + rp(' = (360 − 0.90)/3.99 ≈ 90.0 km')), '. En términos de teoría de grafos, los tiempos de ejecución empíricos verificaron '
-     'la cota lineal ', ('m', r('O(|V| + |E|)')), ' de Cormen et al. [3] para BFS y confirmaron las curvas de deterioro térmico descritas '
-     'por la FAO y la literatura ictiológica tropical [1], [2].')
+heading('V.  Conclusiones')
 
-heading('IV.  Conclusiones')
+para(('b', '1. Eficacia del Modelado en Grafos:'), ' La formulación de un grafo dirigido multimodal de 25 vértices y 41 aristas permitió '
+     'capturar con fidelidad geográfica y matemática la logística pesquera de Puerto Gaitán, demostrando la aplicabilidad de los algoritmos '
+     'de caminos mínimos en problemáticas agroalimentarias reales.')
 
-def concl(num, text):
-    p = doc.add_paragraph()
-    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    p.paragraph_format.space_before = Pt(1)
-    p.paragraph_format.space_after = Pt(2.5)
-    p.paragraph_format.line_spacing = 1.05
-    p.paragraph_format.left_indent = Inches(0.16)
-    p.paragraph_format.first_line_indent = Inches(-0.16)
-    run_fmt(p.add_run(f'{num}. '), 9, bold=True)
-    run_fmt(p.add_run(text), 9)
+para(('b', '2. Solución Óptima FLP:'), ' El centro frigorífico F02 (Puerto Gaitán) centraliza eficientemente los 265.8 kg/día capturados '
+     'en los ríos Manacacías, Meta e Iteviare con un costo mensual de \$13.0M COP, evitando un sobrecosto de \$10.0M COP que representaría '
+     'abrir tres plantas redundantes.')
 
-concl(1, 'La consolidación de las 33 encuestas cartográficas en un grafo dirigido de 16 vértices y 24 aristas mediante listas de adyacencia '
-         'en C++ permitió identificar formalmente que el 57.6 % de los pescadores converge en Bocas del Manacacías y el 42.4 % reporta '
-         'deterioro en Manacacías Medio, validando la capacidad del TAD grafo para estructurar información hidrográfica heterogénea.')
-concl(2, 'La resolución de la Incógnita 1 mediante BFS demostró que en la Red Actual el 60 % de los puntos de pesca (6/10) excede los '
-         '360 min antes de acceder a refrigeración (promedio 373.0 min), mientras que la ubicación de los tres centros propuestos en Río '
-         'Muco, Manacacías Medio y Bocas del Manacacías reduce dicho tiempo medio a 152.5 min (mejora de 59.1 %) con 0/10 puntos en riesgo.')
-concl(3, 'El análisis exhaustivo de la Incógnita 2 vía DFS sobre 240 rutas simples probó que las trayectorias en estado óptimo para cachama '
-         'de río se incrementan del 18.3 % (44/240) al 80.0 % (192/240), eliminando por completo las 147 rutas en deterioro crítico (>480 min) '
-         'que impedían la llegada de producto sano a Villavicencio y Bogotá.')
-concl(4, 'La regresión lineal de la Red Optimizada (t = 3.99 d + 0.90 min, R² = 0.9998) valida el régimen de navegación fluvial uniforme '
-         'a 15.04 km/h y establece un radio de cobertura máximo de 90.0 km (±18.0 km) por cada centro de acopio con frío para garantizar la '
-         'inocuidad pesquera en futuros nodos de la altillanura.')
+para(('b', '3. Cumplimiento Sanitario Total:'), ' En el 100 % de los puntos de pesca, el tiempo transcurrido hasta el primer abatimiento '
+     'térmico (0.08 a 2.20 h) es inferior al límite de 4.0 h de la FAO, erradicando el deterioro crítico del producto.')
+
+para(('b', '4. Preservación Ambiental:'), ' El ruteo con exclusión ambiental desvió exitosamente el tráfico de lanchas de los hábitats '
+     'protegidos H01 y H02, garantizando sostenibilidad ecológica sin comprometer la viabilidad comercial.')
 
 heading('Referencias')
 
 refs = [
-    '[1] Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO), "El pescado fresco: su calidad y cambios de su calidad", Documento Técnico de Pesca 348, Roma, 1998.',
-    '[2] M. A. Ramírez et al., "Evaluación sensorial y microbiológica de cachama (Colossoma macropomum) almacenada a temperatura ambiente y en refrigeración", Anales de Nutrición / SciELO, vol. 24, pp. 45–53, 2018.',
-    '[3] T. H. Cormen, C. E. Leiserson, R. L. Rivest y C. Stein, Introduction to Algorithms, 4.ª ed. Cambridge, MA: MIT Press, 2022, pp. 549–572.',
-    '[4] R. F. Gilberg y B. A. Forouzan, Data Structures: A Pseudocode Approach with C++, 2.ª ed. Boston, MA: Cengage Learning, 2004.',
-    '[5] Grupo de Investigación GRITOX y Corporación Kotsala, "Piscicultura sostenible con especies nativas como alternativa productiva para pescadores artesanales en Puerto Gaitán, Meta", Universidad de los Llanos, Villavicencio, 2026.'
+    '[1] FAO, «El pescado fresco: su calidad y cambios de calidad», Colección FAO: Pesca, N° 348, Roma, 1999.',
+    '[2] SciELO, «Cinética de deterioro y vida útil de Colossoma macropomum bajo almacenamiento refrigerado», Rev. MVZ Córdoba, vol. 24, n° 2, 2019.',
+    '[3] T. H. Cormen, C. E. Leiserson, R. L. Rivest, y C. Stein, Introduction to Algorithms, 3a ed. Cambridge, MA: MIT Press, 2009.',
+    '[4] J. R. Taylor, An Introduction to Error Analysis: The Study of Uncertainties in Physical Measurements, 2a ed. Sausalito, CA: Univ. Science Books, 1997.',
+    '[5] G. Laporte, S. Nickel, y F. Saldanha-da-Gama, Location Science, 2a ed. Cham, Suiza: Springer, 2019.'
 ]
-for rf in refs:
-    pr = doc.add_paragraph()
-    pr.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    pr.paragraph_format.space_before = Pt(0)
-    pr.paragraph_format.space_after = Pt(2)
-    pr.paragraph_format.line_spacing = 1.03
-    pr.paragraph_format.left_indent = Inches(0.18)
-    pr.paragraph_format.first_line_indent = Inches(-0.18)
-    run_fmt(pr.add_run(rf), 8.0)
+
+for ref in refs:
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(1.5)
+    p.paragraph_format.line_spacing = 1.02
+    run_fmt(p.add_run(ref), 7.8)
 
 doc.save(OUT_DOCX)
-print('Informe DOCX generado exitosamente en:', OUT_DOCX)
+print('Documento Word guardado en:', OUT_DOCX)
 
-# Exportar a PDF via Word COM
+# Conversion a PDF usando Word COM
 try:
-    import win32com.client as win32
-    word = win32.Dispatch('Word.Application')
+    import win32com.client
+    word = win32com.client.DispatchEx("Word.Application")
     word.Visible = False
-    doc_word = word.Documents.Open(OUT_DOCX)
-    doc_word.SaveAs(OUT_PDF, FileFormat=17)
-    doc_word.Close()
+    doc_com = word.Documents.Open(OUT_DOCX)
+    doc_com.SaveAs(OUT_PDF, FileFormat=17) # 17 = wdFormatPDF
+    doc_com.Close()
     word.Quit()
-    print('Informe PDF exportado exitosamente en:', OUT_PDF)
+    print('PDF generado exitosamente en:', OUT_PDF)
 except Exception as e:
-    print('Exportación a PDF omitida o fallida:', e)
+    print('Aviso COM Word:', e)

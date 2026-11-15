@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Genera la presentacion en PowerPoint (.pptx) para la exposicion del Proyecto Final
-de Estructuras de Datos (Grafos) en Puerto Gaitan, Meta.
+de Estructuras de Datos (Grafos) en Puerto Gaitan, Meta, basada en el modelo
+multimodal de 25 nodos y 41 aristas de Harold Padilla y Yair Ospino.
 Diseno profesional 16:9 con paleta institucional Unillanos, tarjetas, metricas y graficas.
 """
 import os
@@ -15,6 +16,7 @@ from pptx.enum.shapes import MSO_SHAPE
 BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 ROOT = os.path.abspath(os.path.join(BASE, '..'))
 ASSETS = os.path.join(ROOT, 'Informe_IEEE', 'Assets')
+DATA_OUT = os.path.join(ROOT, 'data', 'output')
 OUT_PPTX = os.path.join(BASE, 'Presentacion_Proyecto_Final_Grafos.pptx')
 OUT_PDF = os.path.join(BASE, 'Presentacion_Proyecto_Final_Grafos.pdf')
 
@@ -23,16 +25,16 @@ prs.slide_width = Inches(13.333)
 prs.slide_height = Inches(7.5)
 blank_layout = prs.slide_layouts[6]
 
-# Paleta de colores
-NAVY = RGBColor(15, 23, 42)       # #0F172A
-CARD_BG = RGBColor(30, 41, 59)    # #1E293B
+# Paleta de colores profesional
+NAVY = RGBColor(15, 23, 42)          # #0F172A
+CARD_BG = RGBColor(30, 41, 59)       # #1E293B
 WHITE = RGBColor(255, 255, 255)
 LIGHT_GRAY = RGBColor(241, 245, 249)
 MUTED = RGBColor(148, 163, 184)
 ACCENT_BLUE = RGBColor(56, 189, 248) # #38BDF8
-ACCENT_GREEN = RGBColor(52, 211, 153) # #34D399
-ACCENT_RED = RGBColor(248, 113, 113)  # #F87171
-ACCENT_AMBER = RGBColor(251, 191, 36) # #FBBF24
+ACCENT_GREEN = RGBColor(52, 211, 153)# #34D399
+ACCENT_RED = RGBColor(248, 113, 113) # #F87171
+ACCENT_AMBER = RGBColor(251, 191, 36)# #FBBF24
 
 def set_slide_background(slide, color):
     bg = slide.background
@@ -40,7 +42,7 @@ def set_slide_background(slide, color):
     fill.solid()
     fill.fore_color.rgb = color
 
-def add_header(slide, title_text, category_text="ESTRUCTURAS DE DATOS • TERCER CORTE"):
+def add_header(slide, title_text, category_text="ESTRUCTURAS DE DATOS • CORTE 3: GRAFOS"):
     cat_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.4), Inches(11.5), Inches(0.4))
     tf_c = cat_box.text_frame
     tf_c.word_wrap = True
@@ -105,336 +107,316 @@ def add_card(slide, left, top, width, height, title, body_paragraphs, border_col
             r.font.size = Pt(11)
             r.font.color.rgb = LIGHT_GRAY
 
+def add_metric_badge(slide, left, top, width, height, number_str, label_str, color=ACCENT_GREEN):
+    shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
+    shape.fill.solid()
+    shape.fill.fore_color.rgb = CARD_BG
+    shape.line.color.rgb = color
+    shape.line.width = Pt(1.5)
+    tf = shape.text_frame
+    tf.word_wrap = True
+    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+
+    p1 = tf.paragraphs[0]
+    p1.alignment = PP_ALIGN.CENTER
+    r1 = p1.add_run()
+    r1.text = number_str
+    r1.font.size = Pt(24)
+    r1.font.bold = True
+    r1.font.color.rgb = color
+
+    p2 = tf.add_paragraph()
+    p2.alignment = PP_ALIGN.CENTER
+    r2 = p2.add_run()
+    r2.text = label_str
+    r2.font.size = Pt(10)
+    r2.font.color.rgb = LIGHT_GRAY
+
 # =========================================================================
-# DIAPOSITIVA 1: PORTADA
+# SLIDE 1: PORTADA INSTITUCIONAL
 # =========================================================================
 s1 = prs.slides.add_slide(blank_layout)
 set_slide_background(s1, NAVY)
 
-# Logo Unillanos
 logo_path = os.path.join(ASSETS, 'logo_unillanos_0.png')
 if os.path.exists(logo_path):
-    s1.shapes.add_picture(logo_path, Inches(1.0), Inches(1.0), width=Inches(1.3))
+    s1.shapes.add_picture(logo_path, Inches(5.9), Inches(0.8), width=Inches(1.5))
 
-t_box = s1.shapes.add_textbox(Inches(2.6), Inches(0.9), Inches(9.8), Inches(2.8))
-tf1 = t_box.text_frame
+tb1 = s1.shapes.add_textbox(Inches(1.0), Inches(2.5), Inches(11.3), Inches(3.2))
+tf1 = tb1.text_frame
 tf1.word_wrap = True
+
 p = tf1.paragraphs[0]
+p.alignment = PP_ALIGN.CENTER
 p.text = "UNIVERSIDAD DE LOS LLANOS"
 p.font.size = Pt(14)
 p.font.bold = True
-p.font.color.rgb = ACCENT_BLUE
-
-p = tf1.add_paragraph()
-p.text = "Facultad de Ciencias Básicas e Ingeniería — Ingeniería en Sistemas"
-p.font.size = Pt(12)
-p.font.color.rgb = MUTED
-p.space_after = Pt(14)
-
-p = tf1.add_paragraph()
-p.text = "Modelado Mediante Grafos Dirigidos para la Optimización de Puntos de Acopio y Red de Frío Pesquera en Puerto Gaitán, Meta"
-p.font.size = Pt(24)
-p.font.bold = True
-p.font.color.rgb = WHITE
-p.space_after = Pt(10)
-
-p = tf1.add_paragraph()
-p.text = "Proyecto Final de Estructuras de Datos • Tercer Corte (Grafos)"
-p.font.size = Pt(14)
 p.font.color.rgb = ACCENT_AMBER
-
-# Tarjeta de Integrantes
-card_int = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(1.0), Inches(4.3), Inches(11.3), Inches(2.3))
-card_int.fill.solid()
-card_int.fill.fore_color.rgb = CARD_BG
-card_int.line.color.rgb = ACCENT_BLUE
-card_int.line.width = Pt(1.5)
-
-tf_int = card_int.text_frame
-tf_int.word_wrap = True
-tf_int.margin_left = Inches(0.35)
-tf_int.margin_top = Inches(0.25)
-
-p = tf_int.paragraphs[0]
-p.text = "EQUIPO DE TRABAJO E INVESTIGACIÓN"
-p.font.size = Pt(13)
-p.font.bold = True
-p.font.color.rgb = ACCENT_BLUE
-p.space_after = Pt(10)
-
-p = tf_int.add_paragraph()
-p.text = "• Yair Armando Ospino Herrera — Código: 160005565"
-p.font.size = Pt(13)
-p.font.bold = True
-p.font.color.rgb = WHITE
 p.space_after = Pt(4)
 
-p = tf_int.add_paragraph()
-p.text = "• Harold Esteban Padilla Díaz — Código: 160005567"
-p.font.size = Pt(13)
+p = tf1.add_paragraph()
+p.alignment = PP_ALIGN.CENTER
+p.text = "FACULTAD DE CIENCIAS BÁSICAS E INGENIERÍA — INGENIERÍA EN SISTEMAS"
+p.font.size = Pt(11)
+p.font.color.rgb = MUTED
+p.space_after = Pt(16)
+
+p = tf1.add_paragraph()
+p.alignment = PP_ALIGN.CENTER
+p.text = "Optimización Multimodal de Cadenas de Frío para Pesca Artesanal\nmediante Teoría de Grafos y Localización de Instalaciones (FLP)"
+p.font.size = Pt(23)
 p.font.bold = True
 p.font.color.rgb = WHITE
-p.space_after = Pt(10)
+p.space_after = Pt(8)
 
-p = tf_int.add_paragraph()
-p.text = "Villavicencio, Meta — Noviembre de 2026"
-p.font.size = Pt(11)
+p = tf1.add_paragraph()
+p.alignment = PP_ALIGN.CENTER
+p.text = "Caso de Estudio: Corredor Fluvial y Terrestre de Puerto Gaitán, Meta"
+p.font.size = Pt(13)
+p.font.italic = True
+p.font.color.rgb = ACCENT_BLUE
+
+foot_b = s1.shapes.add_textbox(Inches(1.0), Inches(5.9), Inches(11.3), Inches(1.2))
+tff = foot_b.text_frame
+p = tff.paragraphs[0]
+p.alignment = PP_ALIGN.CENTER
+p.text = "Autores: Yair Armando Ospino Herrera (160005565)  •  Harold Esteban Padilla Díaz (160005567)"
+p.font.size = Pt(12)
+p.font.bold = True
+p.font.color.rgb = WHITE
+
+p = tff.add_paragraph()
+p.alignment = PP_ALIGN.CENTER
+p.text = "Docente: Estructuras de Datos • Semestre 2026-II • Villavicencio, Meta"
+p.font.size = Pt(10)
 p.font.color.rgb = MUTED
 
 # =========================================================================
-# DIAPOSITIVA 2: PROBLEMÁTICA Y DATOS DE CAMPO
+# SLIDE 2: CONTEXTO Y PROBLEMÁTICA REAL
 # =========================================================================
 s2 = prs.slides.add_slide(blank_layout)
 set_slide_background(s2, NAVY)
-add_header(s2, "1. Contexto Territorial y Problemática Pesquera en Puerto Gaitán")
+add_header(s2, "Contexto Territorial y Problemática Pesquera en Puerto Gaitán")
 
-add_card(s2, Inches(0.8), Inches(1.6), Inches(5.6), Inches(5.2),
-         "Realidad de la Pesca Artesanal",
-         [("Cuenca de la Altillanura:", "Extensa red hídrica (ríos Meta, Manacacías, Yucao, Muco, Planas, Tomo, Vichada)."),
-          ("Carencia de Infraestructura:", "Ausencia crítica de muelles adecuados, centros de acopio y red de frío en las riberas fluviales."),
-          ("Tránsito Térmico Crítico:", "Los pescadores navegan en canoa bajo temperaturas de 27–30 °C. Sin hielo, el pescado sufre descomposición acelerada."),
-          ("Impacto Socioeconómico:", "Pérdida de toneladas de producto ('M3 dañados'), depreciación del valor comercial y riesgos de inocuidad alimentaria.")],
-         border_color=ACCENT_RED)
+add_card(s2, Inches(0.8), Inches(1.8), Inches(5.6), Inches(5.0),
+         "Realidad del Pescador Artesanal", [
+             ("Cuencas Hidrográficas:", "Actividad pesquera concentrada en los ríos Meta, Manacacías e Iteviare."),
+             ("7 Asociaciones Censadas:", "ASOPESGA, Atarraya Verde, Asovida, Asopespor, Puerto Trujillo, Desembarcadero y Soplaviento."),
+             ("Producción Regional:", "265.8 kg/día censados en campo con picos estacionales de subienda."),
+             ("Aislamiento Fluvial:", "Comunidades como Puerto Trujillo (P05) distan a más de 63 km de navegación de centros poblados."),
+             ("Temperatura Ambiente:", "Temperaturas promedio de 30 °C con alta radiación solar directa sobre las canoas."),
+         ], border_color=ACCENT_BLUE)
 
-add_card(s2, Inches(6.8), Inches(1.6), Inches(5.7), Inches(5.2),
-         "Diagnóstico de las 33 Encuestas Cartográficas",
-         [("Datos de Campo Reales:", "Análisis y digitalización de 33 encuestas directas a pescadores de Puerto Gaitán y Puerto López."),
-          ("Concentración en Confluencias:", "19 de 33 pescadores (57.6 %) convergen en la desembocadura de Bocas del Manacacías."),
-          ("Punto Crítico Manacacías Medio:", "14 encuestas (42.4 %) reportan deterioro severo (D), destrucción de hábitat (H) y falta de muelle (M)."),
-          ("Denuncia Explícita (Encuesta 31):", "'No tenemos muelles, no tenemos puntos de acopio, no tenemos red de frío, no tenemos lugares de venta.'"),
-          ("Oportunidad Computacional:", "Estructurar esta cartografía en un modelo formal de grafos para optimizar la logística fluvial.")],
-         border_color=ACCENT_BLUE)
+add_card(s2, Inches(6.8), Inches(1.8), Inches(5.7), Inches(3.2),
+         "El Cuello de Botella Logístico", [
+             ("Pérdidas Poscaptura:", "Hasta un 40% del pescado se deteriora antes de alcanzar los centros de venta."),
+             ("Ausencia de Infraestructura:", "Falta de cuartos fríos y muelles con energía continua en las riberas rurales."),
+             ("Límite de Inocuidad:", "El pescado fresco supera el umbral sanitario admisible tras 4.0 h sin refrigeración."),
+         ], border_color=ACCENT_RED)
+
+add_metric_badge(s2, Inches(6.8), Inches(5.3), Inches(2.7), Inches(1.5), "265.8 kg", "Captura Diaria Censada", ACCENT_BLUE)
+add_metric_badge(s2, Inches(9.8), Inches(5.3), Inches(2.7), Inches(1.5), "40%", "Pérdida Poscaptura Sin Frío", ACCENT_RED)
 
 # =========================================================================
-# DIAPOSITIVA 3: FUNDAMENTO BIOLÓGICO (CACHAMA DE RÍO)
+# SLIDE 3: MODELO BIOLÓGICO Y CADENA DE FRÍO
 # =========================================================================
 s3 = prs.slides.add_slide(blank_layout)
 set_slide_background(s3, NAVY)
-add_header(s3, "2. Fundamento Biológico: Cachama de Río (Colossoma macropomum)")
+add_header(s3, "Fundamento Biológico: Cinética de Deterioro de la Cachama")
 
-add_card(s3, Inches(0.8), Inches(1.6), Inches(3.7), Inches(5.2),
-         "Cinética de Deterioro Térmico",
-         [("Especie Representativa:", "Cachama de río, pilar de la pesca artesanal y piscicultura en la Orinoquía colombiana."),
-          ("Sensibilidad a 28–30 °C:", "La exposición al calor tropical acelera la pérdida de ATP y desencadena un rigor mortis prematuro."),
-          ("Proliferación Mesófila:", "Bacterias alterantes invaden el músculo estéril generando olores putrefactos y pérdida total de firmeza."),
-          ("Estudios FAO & SciELO:", "Respaldan que el frío a 0 °C alarga la vida útil a 14 días; a temperatura ambiente el colapso ocurre en horas.")],
-         border_color=ACCENT_AMBER)
+add_card(s3, Inches(0.8), Inches(1.8), Inches(5.8), Inches(5.0),
+         "Comportamiento Térmico del Pescado", [
+             ("Especie Foco:", "Cachama de río (Colossoma macropomum), altamente comercial en la Orinoquía."),
+             ("Tasa de Deterioro Base:", "2.5% por cada hora transcurrida a temperatura ambiente (30 °C)."),
+             ("Zonas Críticas (D):", "En pasos destapados sin sombra, la degradación se acelera con factor ×1.5 (3.75%/h)."),
+             ("Tiempo Máximo Sin Frío:", "4.0 horas (240 min) es el límite estricto de inocuidad según parámetros FAO."),
+             ("Efecto de la Cadena de Frío:", "A 0 °C (hielo 1:1), la vida útil se extiende hasta 360 horas (15 días)."),
+         ], border_color=ACCENT_AMBER)
 
-add_card(s3, Inches(4.8), Inches(1.6), Inches(3.7), Inches(5.2),
-         "Umbrales Operativos de Decisión",
-         [("≤ 360 min (6.0 h) — ÓPTIMO:", "Máxima frescura comercial. El pez conserva textura firme, ojos convexos y nula carga bacteriana."),
-          ("360–480 min (6–8 h) — ALERTA:", "Fase crítica. Inicio de proliferación microbiana. Pérdida parcial de calidad comercial."),
-          ("> 480 min (8.0 h) — CRÍTICO:", "Deterioro irreversible. No apto para consumo humano ni transporte a Villavicencio o Bogotá."),
-          ("Regla del Algoritmo:", "Todo trayecto que supere 360 min sin tocar un nodo de frío (F) entra en estado de alerta o rechazo.")],
-         border_color=ACCENT_RED)
-
-add_card(s3, Inches(8.8), Inches(1.6), Inches(3.7), Inches(5.2),
-         "Impacto de la Red de Frío",
-         [("Detención del Reloj Térmico:", "Al arribar a un centro con red de frío (F), la carga bacteriana se estabiliza a 0 °C."),
-          ("Transporte Intermodal Seguro:", "Permite acondicionar el pescado en cajas con hielo para el tramo terrestre hacia Bogotá (110 km)."),
-          ("Objetivo de los Algoritmos:", "Garantizar que todo punto de pesca alcance un centro A+F en menos de 360 minutos de viaje fluvial."),
-          ("Respaldo Científico:", "Citado formalmente bajo directrices técnicas de la FAO [1] y ensayos en cachama [2].")],
-         border_color=ACCENT_GREEN)
+add_card(s3, Inches(7.0), Inches(1.8), Inches(5.5), Inches(5.0),
+         "Modelo Matemático Térmico", [
+             ("Función de Pérdida:", "D_acum = D_0 + ∑ (k_i · t_i)"),
+             ("Reinicio Térmico:", "Al ingresar a un Centro Frío (F), la temperatura baja a 0 °C y el reloj sin frío se reinicia a 0.0 h."),
+             ("Penalización de Muelle:", "Cada transbordo fluvial-terrestre en muelle suma +0.25 h bajo el sol."),
+             ("Conservación a Mercados:", "El producto consolidado en frío viaja en furgón isotérmico por carretera nacional."),
+         ], border_color=ACCENT_GREEN)
 
 # =========================================================================
-# DIAPOSITIVA 4: MODELADO FORMAL CON GRAFOS
+# SLIDE 4: ESTRUCTURAS DE DATOS Y ARQUITECTURA
 # =========================================================================
 s4 = prs.slides.add_slide(blank_layout)
 set_slide_background(s4, NAVY)
-add_header(s4, "3. Modelado Formal con Grafos Dirigidos y Ponderados")
+add_header(s4, "Estructuras de Datos y Arquitectura del Sistema")
 
-add_card(s4, Inches(0.8), Inches(1.6), Inches(5.6), Inches(5.2),
-         "Abstracción Matemática G = (V, E, w)",
-         [("Vértices V (16 Nodos Tipificados):", "Puntos espaciales de la red categorizados según la convención del curso:"),
-          ("  • P (Pesca):", "10 puntos (Yucao, Manacacías, Muco, Guarrojo, Planas, Tomo, etc.)"),
-          ("  • D (Deterioro):", "2 nodos de alta criticidad (Manacacías Medio, Bocas)"),
-          ("  • A / F (Acopio y Frío):", "Centros receptores con hielo y refrigeración"),
-          ("  • M (Muelle):", "Puntos de desembarque formal"),
-          ("  • V / Ciudad (Venta):", "Puerto Gaitán, Puerto López, Villavicencio, Bogotá"),
-          ("Aristas Dirigidas E (24 Arcos):", "Conexiones fluviales (canoa ~15 km/h) y viales (camión)"),
-          ("Pesos w(u, v):", "Tiempo de traslado en minutos + distancia en km")],
-         border_color=ACCENT_BLUE)
+add_card(s4, Inches(0.8), Inches(1.8), Inches(3.8), Inches(5.0),
+         "1. Grafo Logístico", [
+             ("Representación:", "Grafo dirigido ponderado G = (V, E)."),
+             ("Estructura Interna:", "Lista de Adyacencia con diccionario Hash O(1)."),
+             ("Complejidad:", "Espacio O(|V| + |E|), inserción de aristas O(1)."),
+             ("Peso Multicriterio:", "Pondera tiempo, costo, confiabilidad, pérdida y retrasos."),
+         ], border_color=ACCENT_BLUE)
 
-add_card(s4, Inches(6.8), Inches(1.6), Inches(5.7), Inches(5.2),
-         "Estructura de Datos Implementada en C++",
-         [("Herencia de las Prácticas del Curso:", "Reutilización de clases plantilla POO desarrolladas en los laboratorios:"),
-          ("  • List<T>:", "Lista enlazada simple genérica para almacenar vértices y aristas."),
-          ("  • Edge<T>:", "Arista dirigida con peso en minutos, distancia km y medio."),
-          ("  • Vertex<T>:", "Vértice con lista de adyacencia (connectedTo), color, distancia, predecesor."),
-          ("  • Graph<T>:", "Grafo con métodos addEdge, addVertex, imprimirListaAdyacencia."),
-          ("Eficiencia Algorítmica:", "Almacenamiento en lista de adyacencia con espacio O(|V| + |E|) y recorridos en tiempo lineal O(|V| + |E|)."),
-          ("Interacción y Persistencia:", "Carga desde archivos planos txt/csv y menú interactivo de consola en C++.")],
-         border_color=ACCENT_GREEN)
+add_card(s4, Inches(4.8), Inches(1.8), Inches(3.8), Inches(5.0),
+         "2. Grafo Fluvial Real", [
+             ("Origen de Datos:", "Shapefile IGAC rios.shp con cauces reales."),
+             ("Topología Cuantizada:", "12,413 vértices a 5 decimales (1.1 m) y 24,790 aristas."),
+             ("Índice Espacial:", "Rejilla Hash de 447 celdas (0.05° × 0.05°) para búsqueda rápida."),
+             ("Dijkstra Fluvial:", "Navega por meandros reales del río."),
+         ], border_color=ACCENT_GREEN)
+
+add_card(s4, Inches(8.8), Inches(1.8), Inches(3.7), Inches(5.0),
+         "3. Malla Vial OSRM", [
+             ("Geometría de Carreteras:", "Motor OSRM sobre OpenStreetMap."),
+             ("Corredor Vial:", "Ruta Nacional 40 (Puerto Gaitán - Puerto López - Villavicencio - Bogotá)."),
+             ("Caché Persistente:", "rutas_cache.json con 41 polilíneas exactas."),
+             ("Sin Dependencias Web:", "Garantiza ejecución local inmediata."),
+         ], border_color=ACCENT_AMBER)
 
 # =========================================================================
-# DIAPOSITIVA 5: TOPOLOGÍA DE LA RED POR CAPAS
+# SLIDE 5: TOPOLOGÍA MULTIMODAL (25 VÉRTICES)
 # =========================================================================
 s5 = prs.slides.add_slide(blank_layout)
 set_slide_background(s5, NAVY)
-add_header(s5, "4. Arquitectura Topológica de la Red Logística")
+add_header(s5, "Topología de la Red: Catálogo de 25 Vértices y 41 Aristas")
 
-# Imagen de la topologia
-fig1_path = os.path.join(ASSETS, 'figura_1_topologia_grafo.png')
+fig1_path = os.path.join(ASSETS, 'figura_1_topologia_col.png')
 if os.path.exists(fig1_path):
-    s5.shapes.add_picture(fig1_path, Inches(0.8), Inches(1.6), width=Inches(8.5))
+    s5.shapes.add_picture(fig1_path, Inches(0.8), Inches(1.8), width=Inches(3.8))
 
-add_card(s5, Inches(9.6), Inches(1.6), Inches(2.9), Inches(5.2),
-         "Estructura en 4 Capas",
-         [("Capa 1: Puntos Pesca", "10 subcuencas periféricas."),
-          ("Capa 2: Confluencias", "Puntos críticos de deterioro reconvertidos a Centros A+F."),
-          ("Capa 3: Cabeceras", "Desembarque en Puerto Gaitán y Puerto López."),
-          ("Capa 4: Mercados", "Corredores viales hacia Villavicencio (193 km) y Bogotá (110 km adicionales)."),
-          ("Flujo Logístico:", "Navegación aguas abajo -> consolidación con frío -> despacho intermodal.")],
-         border_color=ACCENT_BLUE)
+add_card(s5, Inches(4.9), Inches(1.8), Inches(7.6), Inches(5.0),
+         "Los 7 Tipos Funcionales de Vértices", [
+             ("🐟 P — Puntos de Pesca (7):", "P01 a P07; orígenes de flujo (captura total 265.8 kg/día)."),
+             ("⚓ M — Muelles Fluviales (3):", "M01, M02, M03; transbordo lancha → camión (+0.25 h al sol)."),
+             ("📦 A — Centros de Acopio (3):", "A01, A02, A03; consolidación obligatoria de pesca rural."),
+             ("❄️ F — Centros Frigoríficos (3):", "F01 (Alto Neblinas), F02 (Puerto Gaitán), F03 (Puerto López). Abatimiento térmico a 0 °C."),
+             ("🌡️ D — Zonas de Deterioro (2):", "D01 y D02; tramos sin sombra donde la tasa se multiplica por ×1.5."),
+             ("🌿 H — Hábitats Protegidos (2):", "H01 y H02; áreas de desove con restricción ambiental (bloqueadas para paso intermedio)."),
+             ("🏪 V — Mercados de Venta (5):", "V_PG1, V_PG2 (Pto. Gaitán), V_VLL (Villavicencio), V_BOG1, V_BOG2 (Bogotá)."),
+         ], border_color=ACCENT_BLUE)
 
 # =========================================================================
-# DIAPOSITIVA 6: INCÓGNITA 1 (BFS)
+# SLIDE 6: ALGORITMOS DE CAMINO MÍNIMO
 # =========================================================================
 s6 = prs.slides.add_slide(blank_layout)
 set_slide_background(s6, NAVY)
-add_header(s6, "5. Incógnita 1 (BFS): Centro de Frío Más Cercano en Saltos")
+add_header(s6, "Algoritmos de Caminos Mínimos y Verificación Cruzada")
 
-add_card(s6, Inches(0.8), Inches(1.6), Inches(4.5), Inches(5.2),
-         "Algoritmo BFS (Búsqueda en Anchura)",
-         [("Objetivo Operativo:", "Identificar desde cada punto de pesca el primer nodo equipado con frío (A/F/V) con el menor número de saltos topológicos."),
-          ("Mecanismo en C++:", "Implementado con cola FIFO (std::queue), coloreado de vértices (blanco -> gris -> negro) y distancias enteras."),
-          ("Reconstrucción de Ruta:", "Punteros al predecesor para obtener el camino mínimo y sumar el tiempo fluvial sin frío acumulado."),
-          ("Diagnóstico Red Actual:", "Al no haber frío en origen ni en cuencas, BFS debe viajar hasta Puerto López:"),
-          ("  • Caño Morroco: 3 saltos, 470 min (ALERTA)"),
-          ("  • Alto Vichada: 4 saltos, 580 min (CRÍTICO)"),
-          ("  • Río Planas: 4 saltos, 510 min (CRÍTICO)"),
-          ("  • Cañalute: 4 saltos, 485 min (CRÍTICO)")],
-         border_color=ACCENT_RED)
+add_card(s6, Inches(0.8), Inches(1.8), Inches(5.8), Inches(5.0),
+         "Dijkstra con Cola de Prioridad", [
+             ("Implementación Propia:", "Cola de prioridad binaria (heapq) en Python, O((V + E) log V)."),
+             ("Criterios Minimizables:", "Tiempo (horas), distancia (km), costo (COP) o peso multicriterio."),
+             ("Filtro Ambiental:", "Parámetro evitar_restringidos=True bloquea vértices tipo H como nodos intermedios."),
+             ("Ejemplo Real:", "P04 evita el hábitat H01 y toma la ruta segura P04 → A01 → F02."),
+         ], border_color=ACCENT_GREEN)
 
-# Imagen de grafica 1
-g1_path = os.path.join(ASSETS, 'grafica_1_bfs_col.png')
-if os.path.exists(g1_path):
-    s6.shapes.add_picture(g1_path, Inches(5.6), Inches(1.6), width=Inches(3.8))
-
-add_card(s6, Inches(9.6), Inches(1.6), Inches(2.9), Inches(5.2),
-         "Impacto Cuantitativo",
-         [("Red Actual:", "Tiempo medio BFS = 373.0 min (> 6 h)."),
-          ("6 de 10 puntos (60 %)", "superan el límite óptimo antes de recibir frío."),
-          ("Red Optimizada:", "Tiempo medio BFS = 152.5 min."),
-          ("Reducción Global:", "59.1 % de disminución en exposición térmica."),
-          ("0 de 10 puntos", "en riesgo crítico bajo la red propuesta.")],
-         border_color=ACCENT_GREEN)
+add_card(s6, Inches(7.0), Inches(1.8), Inches(5.5), Inches(5.0),
+         "Bellman-Ford y Floyd-Warshall", [
+             ("Bellman-Ford O(V·E):", "Verificación cruzada de caminos y detección formal de ciclos negativos."),
+             ("Validación 100% Exitosa:", "Coincidencia exacta de tiempos entre Bellman-Ford y Dijkstra en todas las consultas."),
+             ("Floyd-Warshall O(V³):", "Matriz global de tiempos mínimos entre los 25 nodos del sistema."),
+             ("Reconstrucción de Caminos:", "Matriz de predecesores que permite consultar cualquier ruta en O(L)."),
+         ], border_color=ACCENT_BLUE)
 
 # =========================================================================
-# DIAPOSITIVA 7: INCÓGNITA 2 (DFS)
+# SLIDE 7: RECORRIDOS BFS Y DFS
 # =========================================================================
 s7 = prs.slides.add_slide(blank_layout)
 set_slide_background(s7, NAVY)
-add_header(s7, "6. Incógnita 2 (DFS): Rutas Hacia Mercados y Riesgo de Deterioro")
+add_header(s7, "Recorridos Canónicos del Curso: Algoritmos BFS y DFS")
 
-add_card(s7, Inches(0.8), Inches(1.6), Inches(4.5), Inches(5.2),
-         "Algoritmo DFS (Búsqueda en Profundidad)",
-         [("Objetivo Operativo:", "Explorar exhaustivamente todas las rutas simples posibles desde cada punto P hasta los mercados finales (Gaitán, López, Villavo, Bogotá)."),
-          ("Mecanismo en C++:", "Implementado mediante recursión con retroceso (backtracking) y pila de llamada del sistema."),
-          ("Seguimiento Acumulado:", "Calcula tiempo total, distancia total y tiempo previo al primer nodo con frío."),
-          ("Evaluación Fisiológica:", "Cada ruta se cataloga como Óptima (≤360 min), Alerta (360–480 min) o Deterioro Crítico (>480 min)."),
-          ("Universo Evaluado:", "240 rutas simples hacia mercados regionales y nacionales.")],
-         border_color=ACCENT_BLUE)
+add_card(s7, Inches(0.8), Inches(1.8), Inches(5.8), Inches(5.0),
+         "Búsqueda en Amplitud (BFS)", [
+             ("Estructura:", "Cola FIFO (collections.deque), complejidad O(V + E)."),
+             ("Objetivo Operativo:", "Identificar el centro de acopio o frío más cercano en número de saltos/transbordos."),
+             ("Garantía de Saltos Mínimos:", "P01 alcanza F02 en 2 saltos (P01 → M03 → F02)."),
+             ("Puntos Críticos:", "Detecta que P05 requiere 5 saltos hacia F02 debido a su ubicación extrema en el río Iteviare."),
+         ], border_color=ACCENT_BLUE)
 
-g2a_path = os.path.join(ASSETS, 'grafica_2a_dfs_col.png')
-if os.path.exists(g2a_path):
-    s7.shapes.add_picture(g2a_path, Inches(5.6), Inches(1.6), width=Inches(3.8))
-
-add_card(s7, Inches(9.6), Inches(1.6), Inches(2.9), Inches(5.2),
-         "Diagnóstico de las 240 Rutas",
-         [("Red Actual:", "Solo 44 rutas (18.3 %) son óptimas."),
-          ("147 rutas (61.3 %)", "terminan en deterioro crítico (> 8 horas)."),
-          ("Red Optimizada:", "192 rutas (80.0 %) en estado óptimo."),
-          ("Incremento Óptimo:", "+336 % de rutas viables."),
-          ("Cero Rutas Críticas:", "0 de 240 rutas sufren descomposición (>480 min).")],
-         border_color=ACCENT_GREEN)
+add_card(s7, Inches(7.0), Inches(1.8), Inches(5.5), Inches(5.0),
+         "Búsqueda en Profundidad (DFS)", [
+             ("Estructura:", "Recursión y retroceso (backtracking) con límite de profundidad."),
+             ("Enumeración Exhaustiva:", "Halla todas las rutas simples alternativas entre captura y mercados mayoristas."),
+             ("Evaluación de Resiliencia:", "Permite desviar carga en caso de bloqueo o contingencia en carreteras o ríos."),
+             ("Trazabilidad Térmica:", "Calcula el deterioro acumulado para cada ruta alternativa."),
+         ], border_color=ACCENT_AMBER)
 
 # =========================================================================
-# DIAPOSITIVA 8: PROPUESTA ÓPTIMA (3 CENTROS A+F)
+# SLIDE 8: LOCALIZACIÓN DE INSTALACIONES (FLP)
 # =========================================================================
 s8 = prs.slides.add_slide(blank_layout)
 set_slide_background(s8, NAVY)
-add_header(s8, "7. Propuesta Óptima: Ubicación Estratégica de Centros de Acopio y Frío")
+add_header(s8, "Problema de Localización de Instalaciones (FLP Greedy)")
 
-add_card(s8, Inches(0.8), Inches(1.6), Inches(3.7), Inches(5.2),
-         "1. Bocas del Manacacías",
-         [("Ubicación Estratégica:", "Confluencia de los ríos Manacacías, Yucao y Meta."),
-          ("Demanda Cubierta:", "Atiende directamente al 57.6 % de los pescadores reportados en encuestas."),
-          ("Intercepción Fluvial:", "Permite que las capturas de Yucao y Meta desembarquen en solo 105 min."),
-          ("Equipamiento Propuesto:", "Muelle flotante, cuarto frío solar y planta de hielo en escamas.")],
-         border_color=ACCENT_GREEN)
+g2a_path = os.path.join(ASSETS, 'grafica_2a_dfs_col.png')
+if os.path.exists(g2a_path):
+    s8.shapes.add_picture(g2a_path, Inches(0.8), Inches(1.8), width=Inches(5.0))
 
-add_card(s8, Inches(4.8), Inches(1.6), Inches(3.7), Inches(5.2),
-         "2. Manacacías Medio",
-         [("Ubicación Estratégica:", "Sector intermedio del río Manacacías (nodo D_Manacacias_Medio)."),
-          ("Demanda Cubierta:", "42.4 % de pescadores que denunciaban deterioro y ausencia de muelle."),
-          ("Rescate de Cuencas Sur:", "Capta producto de Cañalute, Maiciana, Río Planas y Manacacías Sur."),
-          ("Tiempo a Frío:", "Baja de 485 min a 255 min (47.4 % de reducción en exposición térmica).")],
-         border_color=ACCENT_GREEN)
-
-add_card(s8, Inches(8.8), Inches(1.6), Inches(3.7), Inches(5.2),
-         "3. Confluencia Río Muco / Meta",
-         [("Ubicación Estratégica:", "Desembocadura del río Muco sobre el río Meta."),
-          ("Rescate Cuencas Lejanas:", "Salva la producción más aislada del extremo oriental: Caño Morroco y Alto Vichada."),
-          ("Reducción Histórica:", "Caño Morroco pasa de 470 min a 170 min (63.8 % de mejora)."),
-          ("Seguridad Logística:", "Evita que las rutas largas superen las 8 horas antes de tocar muelle.")],
-         border_color=ACCENT_GREEN)
+add_card(s8, Inches(6.1), Inches(1.8), Inches(6.4), Inches(5.0),
+         "Selección de la Configuración Óptima", [
+             ("Problema FLP:", "Determinar cuántos y cuáles cuartos fríos abrir minimizando costos fijos y acarreo."),
+             ("Restricción de Inocuidad:", "Todo punto de pesca debe alcanzar frío en t ≤ 4.0 h."),
+             ("Escenario Óptimo Seleccionado:", "Solo Centro Frío Puerto Gaitán (F02) en el casco urbano."),
+             ("Costo Operativo:", "$13,023,272 COP/mes ($59,080 COP/kg)."),
+             ("Cobertura Total:", "100% de los puntos de pesca cubiertos dentro del límite sanitario."),
+             ("Ahorro Económico:", "Evita el sobrecosto de operar 3 plantas frigoríficas ($23,023,272 COP/mes, $104,444 COP/kg)."),
+         ], border_color=ACCENT_GREEN)
 
 # =========================================================================
-# DIAPOSITIVA 9: RESULTADOS CUANTITATIVOS Y REGRESIÓN
+# SLIDE 9: RESULTADOS Y SIMULACIÓN TÉRMICA
 # =========================================================================
 s9 = prs.slides.add_slide(blank_layout)
 set_slide_background(s9, NAVY)
-add_header(s9, "8. Validación Cuantitativa y Modelo Lineal Predictivo")
+add_header(s9, "Resultados de Itinerarios y Cumplimiento Térmico")
 
-g2b_path = os.path.join(ASSETS, 'grafica_2b_regresion_col.png')
-if os.path.exists(g2b_path):
-    s9.shapes.add_picture(g2b_path, Inches(0.8), Inches(1.6), width=Inches(4.8))
+g1_path = os.path.join(ASSETS, 'grafica_1_bfs_col.png')
+if os.path.exists(g1_path):
+    s9.shapes.add_picture(g1_path, Inches(0.8), Inches(1.8), width=Inches(4.8))
 
-add_card(s9, Inches(6.0), Inches(1.6), Inches(6.5), Inches(5.2),
-         "Síntesis Metrológica y Regresión Lineal",
-         [("Regresión Red Actual:", "t = 2.06 · d + 43.8 min  (R² = 0.8851). Dispersión debida a la mezcla de canoa fluvial con carretera a Puerto López."),
-          ("Regresión Red Optimizada:", "t = 3.99 · d + 0.90 min  (R² = 0.9998). Ajuste determinista lineal casi perfecto."),
-          ("Significado Físico de la Pendiente:", "m = 3.99 min/km equivale con rigor al inverso de la velocidad media fluvial en canoa: 1 / (15.04 km/h)."),
-          ("Herramienta Predictiva:", "Permite calcular el radio máximo fluvial admisible antes de exceder las 6 h (360 min) de la cachama:"),
-          ("  d_máx = (360 − 0.90) / 3.99 ≈ 90.0 km", "(radio de cobertura seguro para cada nuevo centro de acopio)."),
-          ("Resumen de Mejoras Globales:", "Tiempo medio BFS: 373 min -> 152.5 min (-59.1 %). Rutas críticas DFS: 147 -> 0 (-100 %).")],
-         border_color=ACCENT_BLUE)
+add_card(s9, Inches(5.9), Inches(1.8), Inches(6.6), Inches(5.0),
+         "Tiempos de Acceso a Cadena de Frío", [
+             ("P06 Desembarcadero Central:", "0.08 h (5 min) al frío — acceso urbano inmediato."),
+             ("P03 San Miguel / P04 Asopespor:", "0.25 h y 0.40 h al acopio A01 en el río Meta."),
+             ("P01 Neblinas / P02 Atarraya / P07 Soplaviento:", "0.38 a 0.48 h a través del muelle M03."),
+             ("P05 Puerto Trujillo (Cuenca Crítica):", "2.20 h de travesía fluvial compleja, pero < 4.0 h de límite."),
+             ("Cumplimiento Sanitario Regional:", "100% de las asociaciones pesqueras operan dentro del límite inocuo."),
+             ("Mapa Interactivo Folium:", "Visualización web con capas de calor, rutas reales OSRM y GeoJSON."),
+         ], border_color=ACCENT_BLUE)
 
 # =========================================================================
-# DIAPOSITIVA 10: CONCLUSIONES Y DEMOSTRACIÓN
+# SLIDE 10: CONCLUSIONES E IMPACTO
 # =========================================================================
 s10 = prs.slides.add_slide(blank_layout)
 set_slide_background(s10, NAVY)
-add_header(s10, "9. Conclusiones y Demostración en Vivo")
+add_header(s10, "Conclusiones del Proyecto e Impacto Socioeconómico")
 
-add_card(s10, Inches(0.8), Inches(1.6), Inches(5.6), Inches(5.2),
-         "Conclusiones del Proyecto",
-         [("1. Estructuración Rigurosa:", "Se transformaron 33 encuestas cualitativas en un grafo dirigido de 16 vértices y 24 aristas con listas de adyacencia en C++."),
-          ("2. Eficacia de BFS:", "Comprobó que la Red Actual dejaba al 60 % de puntos en deterioro térmico, mientras la Red Optimizada reduce el tiempo en 59.1 % sin puntos en riesgo."),
-          ("3. Poder Explicativo de DFS:", "Demostró un incremento de rutas viables del 18.3 % al 80.0 %, erradicando las 147 rutas con pérdida comercial."),
-          ("4. Impacto en Ingeniería de Sistemas:", "Evidencia cómo las estructuras de datos y algoritmos fundamentales resuelven problemáticas complejas reales en el territorio llanero.")],
-         border_color=ACCENT_BLUE)
+add_card(s10, Inches(0.8), Inches(1.8), Inches(5.8), Inches(5.0),
+         "Aportes en Estructuras de Datos", [
+             ("Dominio Teórico-Práctico:", "Construcción integral de grafos dirigidos multimodales con listas de adyacencia y hashing."),
+             ("Algoritmia Completa:", "Implementación desde cero de Dijkstra, Floyd-Warshall, Bellman-Ford, BFS, DFS y FLP."),
+             ("Datos Reales de Campo:", "Integración de encuestas de pescadores, shapefiles hidrográficos y rutas OSRM."),
+             ("Pruebas Unitarias Verificadas:", "34+ pruebas unitarias con pytest 100% verdes."),
+         ], border_color=ACCENT_GREEN)
 
-add_card(s10, Inches(6.8), Inches(1.6), Inches(5.7), Inches(5.2),
-         "Demostración y Recursos Disponibles",
-         [("Menú Interactivo de Consola (C++):", "Compilado con g++ -std=c++17. Permite navegar adyacencias, ejecutar BFS y DFS dinámicos."),
-          ("Visualizador Gráfico Interactivo:", "visualizador_grafo.html con física en tiempo real, cambio de escenario y trazado de rutas."),
-          ("Informe Científico Doble Columna:", "Elaborado bajo normativa IEEE y rúbrica oficial de laboratorios Unillanos."),
-          ("Preguntas y Discusión:", "¡Muchas gracias por su atención! Quedamos atentos a sus preguntas y comentarios.")],
-         border_color=ACCENT_GREEN)
+add_card(s10, Inches(7.0), Inches(1.8), Inches(5.5), Inches(5.0),
+         "Impacto en la Región", [
+             ("Seguridad Alimentaria:", "Erradicación del 100% de pérdidas críticas en la comercialización de cachama."),
+             ("Sostenibilidad Ambiental:", "Preservación estricta de hábitats de desove mediante ruteo con exclusión."),
+             ("Eficiencia Financiera:", "Ahorro de $10M COP mensuales demostrando la viabilidad de un único centro central en Puerto Gaitán."),
+             ("Sustentabilidad Pesquera:", "Herramienta computacional escalable para la toma de decisiones públicas en el Meta."),
+         ], border_color=ACCENT_BLUE)
 
+# Guardar presentacion PPTX
 prs.save(OUT_PPTX)
-print("Presentación PPTX generada exitosamente en:", OUT_PPTX)
+print("Presentacion PowerPoint guardada en:", OUT_PPTX)
 
-# Exportar a PDF via PowerPoint COM
+# Conversion a PDF usando PowerPoint COM
 try:
-    import win32com.client as win32
-    ppt = win32.Dispatch('PowerPoint.Application')
-    pres = ppt.Presentations.Open(OUT_PPTX)
-    pres.SaveAs(OUT_PDF, FileFormat=32)
-    pres.Close()
-    ppt.Quit()
-    print("Presentación PDF exportada exitosamente en:", OUT_PDF)
+    import win32com.client
+    ppt_app = win32com.client.DispatchEx("PowerPoint.Application")
+    presentation = ppt_app.Presentations.Open(OUT_PPTX, WithWindow=False)
+    presentation.SaveAs(OUT_PDF, 32) # 32 = ppSaveAsPDF
+    presentation.Close()
+    ppt_app.Quit()
+    print("Presentacion PDF generada exitosamente en:", OUT_PDF)
 except Exception as e:
-    print("Exportación de PPTX a PDF omitida o fallida:", e)
+    print("Aviso COM PowerPoint:", e)

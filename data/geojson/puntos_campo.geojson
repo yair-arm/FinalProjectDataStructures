@@ -1,0 +1,250 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.3081389, 3.5346111] },
+      "properties": { "id": "A-01", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "3°32'04.6\"N", "lon_dms": "72°18'29.3\"W", "categoria_color": "#F39C12", "title": "A-01 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.422, 3.732] },
+      "properties": { "id": "A-02", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "3°43'55.2\"N", "lon_dms": "72°25'19.2\"W", "categoria_color": "#F39C12", "title": "A-02 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.392, 3.702] },
+      "properties": { "id": "A-03", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "3°42'07.2\"N", "lon_dms": "72°23'31.2\"W", "categoria_color": "#F39C12", "title": "A-03 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.886, 4.497] },
+      "properties": { "id": "A-04", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "4°29'49.2\"N", "lon_dms": "71°53'09.6\"W", "categoria_color": "#F39C12", "title": "A-04 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.4368056, 4.83025] },
+      "properties": { "id": "A-05", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "4°49'48.9\"N", "lon_dms": "71°26'12.5\"W", "categoria_color": "#F39C12", "title": "A-05 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.4326111, 3.7611944] },
+      "properties": { "id": "A-06", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "3°45'40.3\"N", "lon_dms": "72°25'57.4\"W", "categoria_color": "#F39C12", "title": "A-06 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.3788889, 3.7105] },
+      "properties": { "id": "A-07", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "3°42'37.8\"N", "lon_dms": "72°22'44.0\"W", "categoria_color": "#F39C12", "title": "A-07 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.0733056, 4.6535] },
+      "properties": { "id": "A-08", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "4°39'12.6\"N", "lon_dms": "71°04'23.9\"W", "categoria_color": "#F39C12", "title": "A-08 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.2523889, 3.3016111] },
+      "properties": { "id": "A-09", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "3°18'05.8\"N", "lon_dms": "72°15'08.6\"W", "categoria_color": "#F39C12", "title": "A-09 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.2301111, 4.8445] },
+      "properties": { "id": "A-10", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "4°50'40.2\"N", "lon_dms": "72°13'48.4\"W", "categoria_color": "#F39C12", "title": "A-10 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.5351944, 4.6945] },
+      "properties": { "id": "A-11", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "4°41'40.2\"N", "lon_dms": "71°32'06.7\"W", "categoria_color": "#F39C12", "title": "A-11 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.5558889, 4.5671944] },
+      "properties": { "id": "A-12", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "4°34'01.9\"N", "lon_dms": "71°33'21.2\"W", "categoria_color": "#F39C12", "title": "A-12 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.1411111, 3.9413889] },
+      "properties": { "id": "A-13", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "3°56'29.0\"N", "lon_dms": "72°08'28.0\"W", "categoria_color": "#F39C12", "title": "A-13 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.428, 3.4086944] },
+      "properties": { "id": "A-14", "categoria": "A", "tipo": "Acopio", "categoria_texto": "A acopio", "lat_dms": "3°24'31.3\"N", "lon_dms": "72°25'40.8\"W", "categoria_color": "#F39C12", "title": "A-14 - Acopio" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.26425, 3.6465] },
+      "properties": { "id": "D-01", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "3°38'47.4\"N", "lon_dms": "72°15'51.3\"W", "categoria_color": "#E74C3C", "title": "D-01 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.115, 4.055] },
+      "properties": { "id": "D-02", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "4°03'18.0\"N", "lon_dms": "72°06'54.0\"W", "categoria_color": "#E74C3C", "title": "D-02 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.133, 3.945] },
+      "properties": { "id": "D-03", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "3°56'42.0\"N", "lon_dms": "72°07'58.8\"W", "categoria_color": "#E74C3C", "title": "D-03 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.3788889, 3.7373056] },
+      "properties": { "id": "D-04", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "3°44'14.3\"N", "lon_dms": "72°22'44.0\"W", "categoria_color": "#E74C3C", "title": "D-04 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.14, 4.376] },
+      "properties": { "id": "D-05", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "4°22'33.6\"N", "lon_dms": "72°08'24.0\"W", "categoria_color": "#E74C3C", "title": "D-05 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.068, 4.2446111] },
+      "properties": { "id": "D-06", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "4°14'40.6\"N", "lon_dms": "72°04'04.8\"W", "categoria_color": "#E74C3C", "title": "D-06 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.4126111, 4.6175] },
+      "properties": { "id": "D-07", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "4°37'03.0\"N", "lon_dms": "71°24'45.4\"W", "categoria_color": "#E74C3C", "title": "D-07 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.2861944, 3.5313889] },
+      "properties": { "id": "D-08", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "3°31'53.0\"N", "lon_dms": "72°17'10.3\"W", "categoria_color": "#E74C3C", "title": "D-08 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.2621944, 4.8016944] },
+      "properties": { "id": "D-09", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "4°48'06.1\"N", "lon_dms": "72°15'43.9\"W", "categoria_color": "#E74C3C", "title": "D-09 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.4963056, 4.6891944] },
+      "properties": { "id": "D-10", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "4°41'21.1\"N", "lon_dms": "71°29'46.7\"W", "categoria_color": "#E74C3C", "title": "D-10 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.3545, 3.5475] },
+      "properties": { "id": "D-11", "categoria": "D", "tipo": "Deterioro", "categoria_texto": "D deterioro", "lat_dms": "3°32'51.0\"N", "lon_dms": "72°21'16.2\"W", "categoria_color": "#E74C3C", "title": "D-11 - Deterioro" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.1375556, 3.7875278] },
+      "properties": { "id": "H-01", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "3°47'15.1\"N", "lon_dms": "72°08'15.2\"W", "categoria_color": "#27AE60", "title": "H-01 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-70.5583056, 4.6833056] },
+      "properties": { "id": "H-02", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "4°40'59.9\"N", "lon_dms": "70°33'29.9\"W", "categoria_color": "#27AE60", "title": "H-02 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.043, 4.286] },
+      "properties": { "id": "H-03", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "4°17'09.6\"N", "lon_dms": "72°02'34.8\"W", "categoria_color": "#27AE60", "title": "H-03 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.076, 4.355] },
+      "properties": { "id": "H-04", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "4°21'18.0\"N", "lon_dms": "72°04'33.6\"W", "categoria_color": "#27AE60", "title": "H-04 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.302, 3.902] },
+      "properties": { "id": "H-05", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "3°54'07.2\"N", "lon_dms": "72°18'07.2\"W", "categoria_color": "#27AE60", "title": "H-05 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.036, 4.717] },
+      "properties": { "id": "H-06", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "4°43'01.2\"N", "lon_dms": "72°02'09.6\"W", "categoria_color": "#27AE60", "title": "H-06 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.5091944, 3.5095] },
+      "properties": { "id": "H-07", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "3°30'34.2\"N", "lon_dms": "72°30'33.1\"W", "categoria_color": "#27AE60", "title": "H-07 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.1988056, 3.7273889] },
+      "properties": { "id": "H-08", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "3°43'38.6\"N", "lon_dms": "72°11'55.7\"W", "categoria_color": "#27AE60", "title": "H-08 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.0503889, 4.3558889] },
+      "properties": { "id": "H-09", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "4°21'21.2\"N", "lon_dms": "72°03'01.4\"W", "categoria_color": "#27AE60", "title": "H-09 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.2413889, 4.6375] },
+      "properties": { "id": "H-10", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "4°38'15.0\"N", "lon_dms": "71°14'29.0\"W", "categoria_color": "#27AE60", "title": "H-10 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.2408056, 3.3996111] },
+      "properties": { "id": "H-11", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "3°23'58.6\"N", "lon_dms": "72°14'26.9\"W", "categoria_color": "#27AE60", "title": "H-11 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.2193889, 4.9931944] },
+      "properties": { "id": "H-12", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "4°59'35.5\"N", "lon_dms": "72°13'09.8\"W", "categoria_color": "#27AE60", "title": "H-12 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.5963889, 4.6766944] },
+      "properties": { "id": "H-13", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "4°40'36.1\"N", "lon_dms": "71°35'47.0\"W", "categoria_color": "#27AE60", "title": "H-13 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.3863056, 3.4541111] },
+      "properties": { "id": "H-14", "categoria": "H", "tipo": "Hábitat", "categoria_texto": "H distribución hábitat", "lat_dms": "3°27'14.8\"N", "lon_dms": "72°23'10.7\"W", "categoria_color": "#27AE60", "title": "H-14 - Hábitat" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.10875, 4.1297778] },
+      "properties": { "id": "M-01", "categoria": "M", "tipo": "Muelle", "categoria_texto": "M presencia de muelle", "lat_dms": "4°07'47.2\"N", "lon_dms": "72°06'31.5\"W", "categoria_color": "#3498DB", "title": "M-01 - Muelle" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.105, 4.168] },
+      "properties": { "id": "M-02", "categoria": "M", "tipo": "Muelle", "categoria_texto": "M presencia de muelle", "lat_dms": "4°10'04.8\"N", "lon_dms": "72°06'18.0\"W", "categoria_color": "#3498DB", "title": "M-02 - Muelle" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.255, 3.818] },
+      "properties": { "id": "M-03", "categoria": "M", "tipo": "Muelle", "categoria_texto": "M presencia de muelle", "lat_dms": "3°49'04.8\"N", "lon_dms": "72°15'18.0\"W", "categoria_color": "#3498DB", "title": "M-03 - Muelle" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.2515, 3.8188889] },
+      "properties": { "id": "M-04", "categoria": "M", "tipo": "Muelle", "categoria_texto": "M presencia de muelle", "lat_dms": "3°49'08.0\"N", "lon_dms": "72°15'05.4\"W", "categoria_color": "#3498DB", "title": "M-04 - Muelle" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.2051944, 3.2018056] },
+      "properties": { "id": "M-05", "categoria": "M", "tipo": "Muelle", "categoria_texto": "M presencia de muelle", "lat_dms": "3°12'06.5\"N", "lon_dms": "72°12'18.7\"W", "categoria_color": "#3498DB", "title": "M-05 - Muelle" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.3186944, 4.7961944] },
+      "properties": { "id": "M-06", "categoria": "M", "tipo": "Muelle", "categoria_texto": "M presencia de muelle", "lat_dms": "4°47'46.3\"N", "lon_dms": "71°19'07.3\"W", "categoria_color": "#3498DB", "title": "M-06 - Muelle" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.2611944, 3.7156111] },
+      "properties": { "id": "M-07", "categoria": "M", "tipo": "Muelle", "categoria_texto": "M presencia de muelle", "lat_dms": "3°42'56.2\"N", "lon_dms": "72°15'40.3\"W", "categoria_color": "#3498DB", "title": "M-07 - Muelle" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-72.5408056, 3.3238889] },
+      "properties": { "id": "M-08", "categoria": "M", "tipo": "Muelle", "categoria_texto": "M presencia de muelle", "lat_dms": "3°19'26.0\"N", "lon_dms": "72°32'26.9\"W", "categoria_color": "#3498DB", "title": "M-08 - Muelle" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.6221667, 4.6105556] },
+      "properties": { "id": "V-01", "categoria": "V", "tipo": "Venta", "categoria_texto": "V lugares de venta", "lat_dms": "4°36'38.0\"N", "lon_dms": "71°37'19.8\"W", "categoria_color": "#8E44AD", "title": "V-01 - Venta" }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-71.659, 4.528] },
+      "properties": { "id": "V-02", "categoria": "V", "tipo": "Venta", "categoria_texto": "V lugares de venta", "lat_dms": "4°31'40.8\"N", "lon_dms": "71°39'32.4\"W", "categoria_color": "#8E44AD", "title": "V-02 - Venta" }
+    }
+  ]
+}

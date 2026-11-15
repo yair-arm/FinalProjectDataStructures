@@ -1,0 +1,9 @@
+id,nombre,tipo,latitud,longitud,produccion_kg_dia,rio_asociado,num_pescadores,observacion
+P01,ASOPESGA - Alto Neblinas,P,4.3500,-72.1200,65.75,Río Manacacías,14,Asociación principal - 24 ton/año histórico
+P02,Atarraya Verde,P,4.3300,-72.1000,40.0,Río Manacacías,20,Producción piscícola en jaulas
+P03,Asovida - San Miguel,P,4.2900,-72.0600,25.0,Río Meta,11,Vereda San Miguel
+P04,Asopespor,P,4.3000,-72.0700,20.0,Río Meta,10,Río Meta
+P05,Puerto Trujillo,P,4.1500,-71.5000,30.0,Río Iteviare,40,Zona alejada - 40 familias
+P06,Desembarcadero Central,P,4.3130,-72.0830,50.0,Río Meta,25,Puerto Gaitán centro
+P07,Soplaviento,P,4.3400,-72.1100,35.0,Río Manacacías,8,Ensenada - sitio experimental
+

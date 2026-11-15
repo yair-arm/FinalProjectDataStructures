@@ -1,0 +1,6 @@
+id,nombre,tipo,latitud,longitud,demanda_kg_dia,observacion
+V_PG1,Llanofish Fishing Store,V,4.3120,-72.0835,80,Cra 9A No 6-03 Barrio El Triunfo Puerto Gaitán
+V_PG2,Tienda El Pavón,V,4.3135,-72.0820,60,Cra 9 No 9-07 Barrio Centro Puerto Gaitán
+V_VLL,Amigos de la Pesca,V,4.1387,-73.6310,300,CC Los Centauros local 82 Villavicencio
+V_BOG1,Buceo y Pesca,V,4.6615,-74.0590,400,Cra 14 No 78-40 Chapinero Bogotá
+V_BOG2,Aqualand Sports,V,4.6820,-74.0720,500,Cra 47a No 93-57 La Castellana Bogotá

@@ -1,0 +1,14 @@
+id,nombre,tipo,latitud,longitud,capacidad_frio_kg,costo_fijo,tiene_energia,tiene_agua,tiene_muelle,restriccion_ambiental,observacion
+F01,Centro Frío Alto Neblinas,F,4.3450,-72.1150,2000,5000000,1,1,1,0,Candidato cerca de ASOPESGA
+F02,Centro Frío Puerto Gaitán,F,4.3128,-72.0826,5000,3000000,1,1,1,0,Casco urbano - infraestructura existente
+A01,Acopio San Miguel,A,4.2900,-72.0600,1000,2500000,1,1,0,0,Centro acopio río Meta - recibe P03 P04
+A02,Acopio Río Manacacías,A,4.3350,-72.1050,1500,3500000,1,1,1,0,Centro acopio Manacacías - recibe P01 P02 P07
+F03,Centro Frío Puerto López,F,4.0862,-72.9550,4000,4500000,1,1,1,0,Centro intermedio en ruta a Villavicencio
+A03,Acopio Puerto Trujillo,A,4.1500,-71.5000,800,2000000,0,1,1,0,Zona sin energía confiable - recibe P05
+M01,Muelle Río Meta Alto,M,4.1298,-72.1088,0,0,0,1,1,0,Muelle de desembarque sobre Río Meta - transbordo fluvial-terrestre
+M02,Muelle Río Meta Central,M,4.1680,-72.1050,0,0,0,1,1,0,Muelle de descarga - punto de acceso río Meta
+M03,Muelle Puerto Gaitán,M,4.3130,-72.0830,0,0,1,1,1,0,Muelle principal en casco urbano - desembarcadero central
+D01,Zona Deterioro Térmico Ruta Sur,D,4.1150,-72.0550,0,0,0,0,0,0,Tramo sin sombra ni refrigeración - alta temperatura superficial
+D02,Zona Deterioro Ruta Meta,D,4.2446,-72.0680,0,0,0,0,0,0,Tramo prolongado sin acceso a hielo - riesgo de pérdida
+H01,Hábitat Protegido Río Meta,H,4.2860,-72.0430,0,0,0,0,0,1,Zona de desove y reproducción - restricción ambiental activa
+H02,Hábitat Protegido Manacacías,H,4.3559,-72.0504,0,0,0,0,0,1,Área protegida - prohibido tránsito de carga pesada
