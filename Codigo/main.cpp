@@ -285,6 +285,7 @@ int main(int argc, char* argv[]) {
         cout << " 4. Resolver Incognita 2 (DFS - Todas las rutas y deterioro Cachama)" << endl;
         cout << " 5. Consultar rutas DFS detalladas de un punto de pesca especifico" << endl;
         cout << " 6. Comparativa Global Antes vs Despues y exportar CSV" << endl;
+        cout << " 7. Abrir Visualizador Grafico Interactivo en el Navegador" << endl;
         cout << " 0. Salir" << endl;
         cout << "Seleccione una opcion: ";
         if (!(cin >> opcion)) break;
@@ -323,6 +324,16 @@ int main(int argc, char* argv[]) {
             }
             case 6:
                 generarComparativa(redActual, redOptimizada, "data/comparativa_resultados.csv");
+                break;
+            case 7:
+                cout << "\nAbriendo visualizador grafico interactivo (visualizador_grafo.html)..." << endl;
+#ifdef _WIN32
+                system("start visualizador_grafo.html");
+#elif __APPLE__
+                system("open visualizador_grafo.html");
+#else
+                system("xdg-open visualizador_grafo.html");
+#endif
                 break;
             case 0:
                 cout << "Finalizando sistema..." << endl;

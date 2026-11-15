@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualizador Interactivo de Red Pesquera — Puerto Gaitán (Meta)</title>
+  <!-- Vis.js Network CDN para renderizado dinámico interactivo con física -->
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --border-card: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-green: #34d399;
+      --accent-red: #f87171;
+      --accent-amber: #fbbf24;
+      --accent-indigo: #818cf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      background: #090d16;
+      border-bottom: 1px solid var(--border-card);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: #fff;
+    }
+
+    .brand-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .controls-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: #334155;
+      border-color: #64748b;
+      transform: translateY(-1px);
+    }
+
+    .btn-active {
+      background: #2563eb;
+      border-color: #3b82f6;
+      box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+    }
+
+    .btn-green {
+      background: #059669;
+      border-color: #10b981;
+    }
+    .btn-green:hover { background: #047857; }
+
+    .btn-amber {
+      background: #d97706;
+      border-color: #f59e0b;
+    }
+    .btn-amber:hover { background: #b45309; }
+
+    .main-container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 65px);
+      position: relative;
+    }
+
+    #network-canvas {
+      flex: 1;
+      height: 100%;
+      background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+    }
+
+    .sidebar {
+      width: 360px;
+      background: #111827;
+      border-left: 1px solid var(--border-card);
+      padding: 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--accent-blue);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat-box {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+
+    .stat-val {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .stat-lbl {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .legend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.8rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .info-detail {
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: #cbd5e1;
+    }
+
+    .info-detail strong {
+      color: #fff;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-p { background: #1d4ed8; color: #fff; }
+    .badge-f { background: #dc2626; color: #fff; }
+    .badge-v { background: #059669; color: #fff; }
+    .badge-d { background: #991b1b; color: #fca5a5; }
+
+    #log-box {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 10px;
+      font-family: 'Consolas', monospace;
+      font-size: 0.75rem;
+      max-height: 150px;
+      overflow-y: auto;
+      color: #38bdf8;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div style="font-size: 1.6rem;">🐟</div>
+      <div>
+        <div class="brand-title">Topología de Red Pesquera — Puerto Gaitán (Meta)</div>
+        <div class="brand-subtitle">Universidad de los Llanos • Estructuras de Datos • Modelado con Grafos Dirigidos</div>
+      </div>
+    </div>
+    <div class="controls-bar">
+      <button id="btn-escenario-actual" class="btn btn-active" onclick="cambiarEscenario('actual')">
+        🔴 Red Actual (Sin Acopio/Frío)
+      </button>
+      <button id="btn-escenario-opt" class="btn" onclick="cambiarEscenario('optimizada')">
+        🟢 Red Optimizada (3 Centros A+F)
+      </button>
+      <button class="btn btn-amber" onclick="ejecutarBFSVisual()">
+        🔍 Incógnita 1 (BFS)
+      </button>
+      <button class="btn btn-green" onclick="ejecutarDFSVisual()">
+        🧭 Incógnita 2 (DFS)
+      </button>
+      <button class="btn" onclick="resetVista()">
+        ↺ Centrar
+      </button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div id="network-canvas"></div>
+
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-title">
+          <span>Resumen de la Red</span>
+          <span id="escenario-tag" class="badge badge-d">Escenario Actual</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div id="stat-tiempo-medio" class="stat-val" style="color: var(--accent-red);">373 min</div>
+            <div class="stat-lbl">T. Medio sin frío</div>
+          </div>
+          <div class="stat-box">
+            <div id="stat-riesgo" class="stat-val" style="color: var(--accent-red);">6 / 10</div>
+            <div class="stat-lbl">Puntos críticos (>6h)</div>
+          </div>
+          <div class="stat-box">
+            <div id="stat-rutas-opt" class="stat-val" style="color: var(--accent-green);">18.3 %</div>
+            <div class="stat-lbl">Rutas DFS óptimas</div>
+          </div>
+          <div class="stat-box">
+            <div id="stat-rutas-crit" class="stat-val" style="color: var(--accent-red);">61.3 %</div>
+            <div class="stat-lbl">Rutas DFS críticas</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Nodo Seleccionado</div>
+        <div id="node-info-content" class="info-detail">
+          Haz clic en cualquier vértice del grafo para consultar sus detalles hidrográfico-logísticos.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Convenciones de Vértices</div>
+        <div class="legend-list">
+          <div class="legend-item">
+            <div class="legend-color" style="background: #2563EB;"></div>
+            <span><strong>Tipo P:</strong> Punto de Pesca Artesanal</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #DC2626;"></div>
+            <span><strong>Tipo F / A+F:</strong> Centro de Acopio y Red de Frío</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #059669;"></div>
+            <span><strong>Tipo V:</strong> Mercados (Puerto Gaitán, Villavo, Bogotá)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #991B1B;"></div>
+            <span><strong>Tipo D:</strong> Zona crítica de deterioro / sin muelle</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #0284C7;"></div>
+            <span><strong>Arista Continua:</strong> Fluvial en Canoa (~15 km/h)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #F59E0B;"></div>
+            <span><strong>Arista Discontinua:</strong> Corredor Terrestre (Camión)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Registro de Ejecución (Consola)</div>
+        <div id="log-box">Listo para inspección. Selecciona un escenario o ejecuta BFS/DFS.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let network = null;
+    let currentEscenario = 'actual';
+
+    const nodosBase = [
+      { id: 'P_Cano_Morroco', label: 'Caño Morroco\n(P)', cuenca: 'Río Tomo', tipo: 'P', reportes: 3, x: -500, y: -260 },
+      { id: 'P_Vichada', label: 'Alto Vichada\n(P)', cuenca: 'Río Vichada', tipo: 'P', reportes: 2, x: -500, y: -130 },
+      { id: 'P_Planas', label: 'Río Planas\n(P)', cuenca: 'Río Planas', tipo: 'P', reportes: 6, x: -500, y: 0 },
+      { id: 'P_Guarrojo', label: 'Río Guarrojo\n(P)', cuenca: 'Río Guarrojo', tipo: 'P', reportes: 4, x: -350, y: -70 },
+      { id: 'P_Muco', label: 'Río Muco\n(P)', cuenca: 'Río Muco', tipo: 'P', reportes: 7, x: -160, y: -200 },
+      { id: 'P_Meta_Ventura', label: 'Meta / Ventura\n(P)', cuenca: 'Río Meta', tipo: 'P', reportes: 8, x: -160, y: -80 },
+      { id: 'P_Canalete_Maiciana', label: 'Cañalute/\nMaiciana (P)', cuenca: 'Manacacías Sur', tipo: 'P', reportes: 3, x: -500, y: 150 },
+      { id: 'P_Manacacias_Sur', label: 'Manacacías Sur\n(P)', cuenca: 'Río Manacacías', tipo: 'P', reportes: 9, x: -350, y: 130 },
+      { id: 'D_Manacacias_Medio', label: 'Manacacías Medio\n(D / Sin Muelle)', cuenca: 'Río Manacacías', tipo: 'D', reportes: 14, x: -160, y: 60 },
+      { id: 'P_Yucao', label: 'Río Yucao\n(P)', cuenca: 'Río Yucao', tipo: 'P', reportes: 18, x: -300, y: 240 },
+      { id: 'P_Chaviva_PtoLopez', label: 'Chaviva / Guira\n(P)', cuenca: 'Río Metica - Yucao', tipo: 'P', reportes: 4, x: -140, y: 260 },
+      { id: 'D_Bocas_Manacacias', label: 'Bocas Manacacías\n(D / Confluencia)', cuenca: 'Confluencia Meta', tipo: 'D', reportes: 19, x: -30, y: 140 },
+      { id: 'Puerto_Gaitan', label: 'Puerto Gaitán\n(Cabecera / Muelle)', cuenca: 'Puerto Gaitán', tipo: 'M', reportes: 28, x: 140, y: -40 },
+      { id: 'Puerto_Lopez', label: 'Puerto López\n(Acopio Regional)', cuenca: 'Puerto López', tipo: 'A', reportes: 4, x: 140, y: 220 },
+      { id: 'Villavicencio', label: 'Villavicencio\n(Mercado Regional)', cuenca: 'Meta Central', tipo: 'V', reportes: 1, x: 340, y: 60 },
+      { id: 'Bogota', label: 'Bogotá D.C.\n(Mercado Nacional)', cuenca: 'Cundinamarca', tipo: 'V', reportes: 1, x: 490, y: 60 }
+    ];
+
+    const aristasBase = [
+      { from: 'P_Cano_Morroco', to: 'P_Meta_Ventura', label: '210m (52km)', medio: 'fluvial', weight: 210 },
+      { from: 'P_Cano_Morroco', to: 'P_Muco', label: '170m (42km)', medio: 'fluvial', weight: 170 },
+      { from: 'P_Vichada', to: 'P_Planas', label: '160m (40km)', medio: 'fluvial', weight: 160 },
+      { from: 'P_Vichada', to: 'P_Guarrojo', label: '185m (46km)', medio: 'fluvial', weight: 185 },
+      { from: 'P_Planas', to: 'P_Guarrojo', label: '115m (29km)', medio: 'fluvial', weight: 115 },
+      { from: 'P_Planas', to: 'P_Manacacias_Sur', label: '150m (38km)', medio: 'fluvial', weight: 150 },
+      { from: 'P_Guarrojo', to: 'P_Muco', label: '120m (30km)', medio: 'fluvial', weight: 120 },
+      { from: 'P_Guarrojo', to: 'D_Manacacias_Medio', label: '165m (41km)', medio: 'fluvial', weight: 165 },
+      { from: 'P_Muco', to: 'P_Meta_Ventura', label: '110m (28km)', medio: 'fluvial', weight: 110 },
+      { from: 'P_Muco', to: 'D_Bocas_Manacacias', label: '145m (36km)', medio: 'fluvial', weight: 145 },
+      { from: 'P_Meta_Ventura', to: 'D_Bocas_Manacacias', label: '130m (32km)', medio: 'fluvial', weight: 130 },
+      { from: 'P_Meta_Ventura', to: 'Puerto_Gaitan', label: '155m (39km)', medio: 'fluvial', weight: 155 },
+      { from: 'P_Canalete_Maiciana', to: 'P_Manacacias_Sur', label: '140m (35km)', medio: 'fluvial', weight: 140 },
+      { from: 'P_Manacacias_Sur', to: 'D_Manacacias_Medio', label: '115m (29km)', medio: 'fluvial', weight: 115 },
+      { from: 'D_Manacacias_Medio', to: 'D_Bocas_Manacacias', label: '95m (24km)', medio: 'fluvial', weight: 95 },
+      { from: 'D_Manacacias_Medio', to: 'Puerto_Gaitan', label: '125m (31km)', medio: 'fluvial', weight: 125 },
+      { from: 'P_Yucao', to: 'D_Bocas_Manacacias', label: '105m (26km)', medio: 'fluvial', weight: 105 },
+      { from: 'P_Yucao', to: 'P_Chaviva_PtoLopez', label: '135m (34km)', medio: 'fluvial', weight: 135 },
+      { from: 'P_Chaviva_PtoLopez', to: 'Puerto_Lopez', label: '90m (22km)', medio: 'fluvial', weight: 90 },
+      { from: 'D_Bocas_Manacacias', to: 'Puerto_Gaitan', label: '45m (11km)', medio: 'fluvial', weight: 45 },
+      { from: 'Puerto_Gaitan', to: 'Puerto_Lopez', label: '105m (110km)', medio: 'terrestre', weight: 105 },
+      { from: 'Puerto_Gaitan', to: 'Villavicencio', label: '170m (193km)', medio: 'terrestre', weight: 170 },
+      { from: 'Puerto_Lopez', to: 'Villavicencio', label: '80m (84km)', medio: 'terrestre', weight: 80 },
+      { from: 'Villavicencio', to: 'Bogota', label: '150m (110km)', medio: 'terrestre', weight: 150 }
+    ];
+
+    function generarDataset(escenario) {
+      const nodes = nodosBase.map(n => {
+        let nodeColor = '#2563EB';
+        let borderColor = '#1E3A8A';
+        let tieneFrio = false;
+        let tipoDisplay = n.tipo;
+        let labelDisplay = n.label;
+
+        if (escenario === 'actual') {
+          if (n.id === 'Puerto_Lopez' || n.id === 'Villavicencio' || n.id === 'Bogota') {
+            nodeColor = '#059669';
+            borderColor = '#064E3B';
+            tieneFrio = true;
+          } else if (n.tipo === 'D') {
+            nodeColor = '#991B1B';
+            borderColor = '#7F1D1D';
+          }
+        } else {
+          // Escenario Optimizado
+          if (n.id === 'P_Muco' || n.id === 'D_Manacacias_Medio' || n.id === 'D_Bocas_Manacacias') {
+            nodeColor = '#DC2626';
+            borderColor = '#7F1D1D';
+            tieneFrio = true;
+            tipoDisplay = 'A+F';
+            if (n.id === 'P_Muco') labelDisplay = 'Río Muco\n★ NUEVO A+F';
+            if (n.id === 'D_Manacacias_Medio') labelDisplay = 'Manacacías Medio\n★ NUEVO A+F';
+            if (n.id === 'D_Bocas_Manacacias') labelDisplay = 'Bocas Manacacías\n★ NUEVO A+F';
+          } else if (n.id === 'Puerto_Gaitan' || n.id === 'Puerto_Lopez' || n.id === 'Villavicencio' || n.id === 'Bogota') {
+            nodeColor = '#059669';
+            borderColor = '#064E3B';
+            tieneFrio = true;
+            if (n.id === 'Puerto_Gaitan') labelDisplay = 'Puerto Gaitán\n(M+F+V)';
+          }
+        }
+
+        return {
+          id: n.id,
+          label: labelDisplay,
+          shape: 'box',
+          margin: 10,
+          cuenca: n.cuenca,
+          tipo: tipoDisplay,
+          reportes: n.reportes,
+          tieneFrio: tieneFrio,
+          x: n.x,
+          y: n.y,
+          font: { color: '#ffffff', size: 12, face: 'Segoe UI', bold: true },
+          color: {
+            background: nodeColor,
+            border: borderColor,
+            highlight: { background: '#f59e0b', border: '#b45309' }
+          },
+          borderWidth: 2,
+          shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 8 }
+        };
+      });
+
+      const edges = aristasBase.map(e => ({
+        id: e.from + '__' + e.to,
+        from: e.from,
+        to: e.to,
+        label: e.label,
+        font: { color: e.medio === 'fluvial' ? '#38bdf8' : '#fbbf24', size: 10, align: 'top', strokeWidth: 2, strokeColor: '#090d16' },
+        arrows: { to: { enabled: true, scaleFactor: 0.8 } },
+        color: {
+          color: e.medio === 'fluvial' ? '#0284c7' : '#d97706',
+          highlight: '#38bdf8',
+          opacity: 0.85
+        },
+        dashes: e.medio === 'terrestre',
+        width: e.medio === 'terrestre' ? 2.5 : 2,
+        smooth: { type: 'curvedCW', roundness: 0.12 }
+      }));
+
+      return { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+    }
+
+    function initNetwork() {
+      const container = document.getElementById('network-canvas');
+      const data = generarDataset(currentEscenario);
+
+      const options = {
+        physics: {
+          enabled: false // mantener posiciones manuales limpias alineadas por capas
+        },
+        interaction: {
+          hover: true,
+          navigationButtons: true,
+          keyboard: true
+        }
+      };
+
+      network = new vis.Network(container, data, options);
+
+      network.on('click', function(params) {
+        if (params.nodes.length > 0) {
+          const nodeId = params.nodes[0];
+          const node = network.body.data.nodes.get(nodeId);
+          mostrarDetalleNodo(node);
+        }
+      });
+    }
+
+    function mostrarDetalleNodo(n) {
+      const container = document.getElementById('node-info-content');
+      container.innerHTML = `
+        <div style="font-size: 1.05rem; font-weight: bold; color: #fff; margin-bottom: 6px;">${n.label.replace('\n', ' ')}</div>
+        <p><strong>Identificador:</strong> <code>${n.id}</code></p>
+        <p><strong>Subcuenca / Zona:</strong> ${n.cuenca}</p>
+        <p><strong>Tipo de Vértice:</strong> <span class="badge ${n.tieneFrio ? 'badge-f' : 'badge-p'}">${n.tipo}</span></p>
+        <p><strong>Red de Frío Activa:</strong> ${n.tieneFrio ? '<span style="color: #34d399; font-weight:bold;">SÍ (Refrigerado)</span>' : '<span style="color: #f87171; font-weight:bold;">NO (Temperatura Ambiente)</span>'}</p>
+        <p><strong>Frecuencia en 33 Encuestas:</strong> ${n.reportes} menciones</p>
+        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #334155; font-size: 0.76rem; color: #94a3b8;">
+          Haz clic en "Incógnita 1" o "Incógnita 2" en la barra superior para trazar rutas desde este punto.
+        </div>
+      `;
+    }
+
+    function cambiarEscenario(escenario) {
+      currentEscenario = escenario;
+      document.getElementById('btn-escenario-actual').className = 'btn' + (escenario === 'actual' ? ' btn-active' : '');
+      document.getElementById('btn-escenario-opt').className = 'btn' + (escenario === 'optimizada' ? ' btn-active' : '');
+
+      const tag = document.getElementById('escenario-tag');
+      const tMedio = document.getElementById('stat-tiempo-medio');
+      const sRiesgo = document.getElementById('stat-riesgo');
+      const rOpt = document.getElementById('stat-rutas-opt');
+      const rCrit = document.getElementById('stat-rutas-crit');
+
+      if (escenario === 'actual') {
+        tag.className = 'badge badge-d';
+        tag.textContent = 'Escenario Actual';
+        tMedio.textContent = '373 min';
+        tMedio.style.color = 'var(--accent-red)';
+        sRiesgo.textContent = '6 / 10';
+        sRiesgo.style.color = 'var(--accent-red)';
+        rOpt.textContent = '18.3 %';
+        rCrit.textContent = '61.3 %';
+        log('Cambiado a ESCENARIO ACTUAL: Sin centros de frío en cuencas. 6 de 10 puntos superan el límite de 6 horas.');
+      } else {
+        tag.className = 'badge badge-f';
+        tag.textContent = 'Red Optimizada';
+        tMedio.textContent = '152.5 min';
+        tMedio.style.color = 'var(--accent-green)';
+        sRiesgo.textContent = '0 / 10';
+        sRiesgo.style.color = 'var(--accent-green)';
+        rOpt.textContent = '80.0 %';
+        rCrit.textContent = '0.0 %';
+        log('Cambiado a RED OPTIMIZADA: 3 Centros A+F instalados (Muco, Manacacías Medio, Bocas). Tiempo medio desciende 59.1%. Cero deterioro crítico.');
+      }
+
+      const data = generarDataset(escenario);
+      network.setData(data);
+    }
+
+    function log(msg) {
+      const box = document.getElementById('log-box');
+      box.textContent = `[${new Date().toLocaleTimeString()}] ${msg}\n` + box.textContent;
+    }
+
+    function resetVista() {
+      network.fit({ animation: { duration: 600, easingFunction: 'easeInOutQuad' } });
+    }
+
+    function ejecutarBFSVisual() {
+      log('--- EJECUTANDO INCÓGNITA 1 (BFS: Búsqueda en Anchura) ---');
+      if (currentEscenario === 'actual') {
+        log('BFS Actual: Debido a la falta de frío en cuencas y en Puerto Gaitán, el primer nodo con frío alcanzable es Puerto López.');
+        log('Ejemplo P_Cano_Morroco -> Puerto_Lopez: 3 saltos, 470 min (>360 min, ALERTA).');
+        log('Ejemplo P_Vichada -> Puerto_Lopez: 4 saltos, 580 min (>480 min, DETERIORO CRÍTICO).');
+      } else {
+        log('BFS Optimizada: Cada punto de pesca encuentra un centro A+F en 1 o 2 saltos.');
+        log('P_Cano_Morroco -> P_Muco: 1 salto, 170 min (ÓPTIMO).');
+        log('P_Vichada -> P_Muco: 2 saltos, 305 min (ÓPTIMO).');
+        log('P_Planas -> P_Muco: 2 saltos, 235 min (ÓPTIMO).');
+        log('P_Yucao -> Bocas Manacacías: 1 salto, 105 min (ÓPTIMO).');
+      }
+      network.focus('D_Bocas_Manacacias', { scale: 1.1, animation: { duration: 600 } });
+    }
+
+    function ejecutarDFSVisual() {
+      log('--- EJECUTANDO INCÓGNITA 2 (DFS: Rutas hacia Mercados y Deterioro) ---');
+      if (currentEscenario === 'actual') {
+        log('DFS Actual (240 rutas simples evaluadas):');
+        log('  * Óptimas (≤360m): 44 rutas (18.3%)');
+        log('  * Alerta bacteriana (360-480m): 49 rutas (20.4%)');
+        log('  * Deterioro crítico (>480m): 147 rutas (61.3% de la producción en riesgo).');
+      } else {
+        log('DFS Optimizada (240 rutas simples evaluadas):');
+        log('  * Óptimas (≤360m): 192 rutas (80.0%, +336% de incremento)');
+        log('  * Alerta moderada: 48 rutas (20.0%)');
+        log('  * Deterioro crítico (>480m): 0 rutas (0.0%). ¡Ningún lote se pierde!');
+      }
+      network.focus('Puerto_Gaitan', { scale: 1.0, animation: { duration: 600 } });
+    }
+
+    window.onload = initNetwork;
+  </script>
+</body>
+</html>
