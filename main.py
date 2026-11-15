@@ -23,6 +23,8 @@ Uso:
 
 import os
 import sys
+import webbrowser
+import subprocess
 
 # Evitar error de memoria de OpenBLAS con numpy/matplotlib en Python 3.14
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
@@ -555,54 +557,120 @@ def ejecutar_visualizacion(grafo: GrafoLogistico):
 
 
 # ═══════════════════════════════════════════════════════════════
-#  MAIN
+#  FUNCIONES DE INTERFAZ DE CONSOLA Y MENÚ
 # ═══════════════════════════════════════════════════════════════
 
-def main():
-    """Flujo principal del programa."""
-    print()
-    print("╔═══════════════════════════════════════════════════════════╗")
-    print("║  OPTIMIZACIÓN DE CENTROS DE REFRIGERACIÓN               ║")
-    print("║  Cadena de Frío — Pesca Artesanal Puerto Gaitán, Meta   ║")
-    print("║  Estructuras de Datos — 2026-II                         ║")
-    print("╚═══════════════════════════════════════════════════════════╝")
+def limpiar_pantalla():
+    """Limpia la terminal según el sistema operativo."""
+    os.system("cls" if os.name == "nt" else "clear")
 
-    # 1. Cargar datos
-    grafo = cargar_datos()
+
+def pausar():
+    """Pausa para permitir al usuario revisar la salida."""
+    print()
+    input("  👉 Presione [ENTER] para regresar al menú principal...")
+
+
+def opcion_resumen_red(grafo: GrafoLogistico):
+    """Muestra el resumen completo y catálogo funcional de nodos."""
+    limpiar_pantalla()
+    print("\n" + "═" * 65)
+    print("  [1] RESUMEN Y TOPOLOGÍA DE LA RED (25 NODOS Y 41 ARISTAS)")
+    print("═" * 65)
     print(grafo.resumen())
 
-    # 2. Dijkstra
+    print("\n  📋 Desglose detallado por categoría de nodo:")
+    categorias = [
+        ("P", "Puntos de Pesca (Orígenes de flujo)"),
+        ("M", "Muelles Fluviales (Transbordo multimodal)"),
+        ("A", "Centros de Acopio Rural (Consolidación)"),
+        ("F", "Centros Frigoríficos (Abatimiento térmico 0 °C)"),
+        ("D", "Zonas de Deterioro Térmico Crítico (×1.5)"),
+        ("H", "Hábitats Protegidos (Restricción ambiental)"),
+        ("V", "Mercados y Puntos de Venta (Destinos comerciales)"),
+    ]
+    for tipo, desc in categorias:
+        nodos_cat = grafo.nodos_por_tipo(tipo)
+        print(f"\n    • {desc} [{len(nodos_cat)}]:")
+        for n in nodos_cat:
+            info_extra = ""
+            if tipo == "P":
+                info_extra = f" — {n.produccion_kg_dia} kg/día"
+            elif tipo in ("A", "F"):
+                info_extra = f" — Cap: {n.capacidad_frio_kg} kg | Energía: {'Sí' if n.tiene_energia else 'No'}"
+            elif tipo == "H":
+                info_extra = " — [Restricción Ambiental Activa]"
+            elif tipo == "D":
+                info_extra = " — [Deterioro Acelerado ×1.5]"
+            elif tipo == "V":
+                info_extra = f" — {n.ciudad}"
+            print(f"      - {n.id:<6} {n.nombre:<32}{info_extra}")
+
+
+def opcion_abrir_mapa(grafo: GrafoLogistico, itinerarios_bog=None):
+    """Abre el mapa interactivo HTML en el navegador web predeterminado."""
+    limpiar_pantalla()
+    print("\n" + "═" * 65)
+    print("  [8] MAPA INTERACTIVO (FOLIUM / LEAFLET CON RUTAS OSRM)")
+    print("═" * 65)
+
+    from src.utils.data_loader import OUTPUT_DIR
+    ruta_mapa = OUTPUT_DIR / "mapa_interactivo.html"
+
+    if not ruta_mapa.exists():
+        print("  [i] Generando archivo HTML del mapa interactivo...")
+        geo_cache = {}
+        try:
+            from src.visualization.route_geometry import obtener_geometrias_grafo
+            geo_cache = obtener_geometrias_grafo(grafo, usar_cache=True)
+        except Exception as e:
+            print(f"  [!] Geometrías OSRM: {e}")
+            geo_cache = {}
+
+        ruta_mapa_gen = generar_mapa_interactivo(
+            grafo,
+            abrir_navegador=True,
+            geometrias_reales=geo_cache,
+            itinerarios=itinerarios_bog,
+        )
+        print(f"  [✓] Mapa generado en: {ruta_mapa_gen}")
+    else:
+        print(f"  [✓] Abriendo mapa interactivo en el navegador: {ruta_mapa.name}")
+        webbrowser.open(f"file://{ruta_mapa.resolve()}")
+
+    print("  ✅ Mapa interactivo abierto con éxito en su navegador.")
+
+
+def opcion_ejecutar_pruebas():
+    """Ejecuta toda la suite de pruebas unitarias (pytest)."""
+    limpiar_pantalla()
+    print("\n" + "═" * 65)
+    print("  [9] EJECUCIÓN DE PRUEBAS UNITARIAS (PYTEST - 40 PRUEBAS)")
+    print("═" * 65)
+    subprocess.run([sys.executable, "-m", "pytest", "tests/", "-v"])
+
+
+def ejecutar_pipeline_completo(grafo: GrafoLogistico):
+    """Ejecuta el flujo completo automatizado con exportación de resultados."""
+    limpiar_pantalla()
+    print("\n" + "═" * 65)
+    print("  [10] EJECUCIÓN DEL PIPELINE COMPLETO Y EXPORTACIÓN")
+    print("═" * 65)
+
+    print(grafo.resumen())
     ejecutar_dijkstra(grafo)
-
-    # 3. Floyd-Warshall
     ejecutar_floyd_warshall(grafo)
-
-    # 3B. Bellman-Ford (verificación cruzada)
     ejecutar_bellman_ford(grafo)
-
-    # 3C. Recorridos fundamentales (BFS y DFS)
     ejecutar_recorridos_fundamentales(grafo)
-
-    # 4. Localización de centros
     ejecutar_localizacion(grafo)
-
-    # 5. Simulación de cadena de frío
     ejecutar_simulacion(grafo)
-
-    # 5B. Itinerarios por punto de pesca
     itinerarios_bog = ejecutar_itinerarios(grafo)
-
-    # 6. Comparación de escenarios
     ejecutar_comparacion(grafo)
-
-    # 7. Visualización
     ejecutar_visualizacion(grafo)
 
-    # Exportar resultados
     print("\n" + "═" * 60)
     print("  EXPORTACIÓN DE RESULTADOS")
     print("═" * 60)
-
     nodos_export = [n.to_dict() for n in grafo.nodos]
     aristas_export = [a.to_dict() for a in grafo.aristas]
     ruta_n = guardar_resultados_csv(nodos_export, "nodos_resultado.csv")
@@ -610,12 +678,10 @@ def main():
     print(f"  [✓] Nodos exportados:   {ruta_n}")
     print(f"  [✓] Aristas exportadas: {ruta_a}")
 
-    # 8. Exportación para Felt.com (GeoJSON + ZIP)
     pesca = grafo.puntos_pesca()
     mercados = grafo.mercados()
     ruta_felt = None
     if pesca and mercados:
-        # Calcular ruta óptima completa: primer punto de pesca → Bogotá
         destino_felt = next(
             (m.id for m in mercados if "BOG" in m.id.upper()),
             mercados[-1].id,
@@ -630,16 +696,13 @@ def main():
         if ruta_felt else "Ruta Óptima",
     )
 
-    # 9. Obtener geometrías reales de carreteras (OSRM)
     geo_cache = {}
     try:
         from src.visualization.route_geometry import obtener_geometrias_grafo
         geo_cache = obtener_geometrias_grafo(grafo, usar_cache=True)
     except Exception as e:
-        print(f"  [!] No se pudieron obtener geometrías reales: {e}")
-        geo_cache = {}
+        print(f"  [!] Geometrías OSRM: {e}")
 
-    # 10. Mapa interactivo HTML (Folium) con rutas reales
     try:
         ruta_mapa = generar_mapa_interactivo(
             grafo,
@@ -650,11 +713,102 @@ def main():
             geometrias_reales=geo_cache,
             itinerarios=itinerarios_bog,
         )
-        print(f"  → Abre en tu navegador: {ruta_mapa}")
+        print(f"  [✓] Mapa interactivo actualizado: {ruta_mapa}")
     except Exception as e:
-        print(f"  [!] No se pudo generar mapa interactivo: {e}")
+        print(f"  [!] Error mapa: {e}")
 
-    print("\n  ✅ Ejecución completada exitosamente.\n")
+    print("\n  ✅ Pipeline completo finalizado con éxito.\n")
+    return itinerarios_bog
+
+
+# ═══════════════════════════════════════════════════════════════
+#  MAIN INTERACTIVO
+# ═══════════════════════════════════════════════════════════════
+
+def main():
+    """Punto de entrada interactivo con menú y limpieza de pantalla."""
+    # Cargar datos inicialmente
+    grafo = cargar_datos()
+    itinerarios_cache = None
+
+    # Modo batch automatizado (por parámetro en consola)
+    if len(sys.argv) > 1 and sys.argv[1].lower() in ("--batch", "--all", "-b", "-a"):
+        ejecutar_pipeline_completo(grafo)
+        return
+
+    while True:
+        limpiar_pantalla()
+        print("╔══════════════════════════════════════════════════════════════════════╗")
+        print("║   OPTIMIZACIÓN DE CENTROS DE REFRIGERACIÓN — PUERTO GAITÁN, META   ║")
+        print("║   Estructuras de Datos — Semestre 03 (2026-II) — Teoría de Grafos   ║")
+        print("║   Autores: Yair Armando Ospino H.  •  Harold Esteban Padilla D.    ║")
+        print("╚══════════════════════════════════════════════════════════════════════╝")
+        print()
+        print("  [1]  Resumen y Topología de la Red (25 Nodos y 41 Aristas)")
+        print("  [2]  Caminos Mínimos con Dijkstra (Rutas Óptimas y Exclusión H)")
+        print("  [3]  Bellman-Ford y Floyd-Warshall (Verificación y Matriz Global)")
+        print("  [4]  Recorridos Canónicos del Corte: BFS y DFS")
+        print("  [5]  Localización Óptima de Centros Frigoríficos (FLP Greedy)")
+        print("  [6]  Simulación Térmica e Itinerarios (Cadena de Frío Poscaptura)")
+        print("  [7]  Evaluación y Comparación de Escenarios Logísticos")
+        print("  [8]  Abrir Mapa Interactivo en el Navegador (Folium / OSRM)")
+        print("  [9]  Ejecutar Pruebas Unitarias Automatizadas (pytest - 40 tests)")
+        print("  [10] Ejecutar Pipeline Completo (Reporte Integral / Exportación)")
+        print("  [0]  Salir")
+        print()
+
+        try:
+            opc = input("  👉 Seleccione una opción [0-10]: ").strip()
+        except (KeyboardInterrupt, EOFError):
+            print("\n  Salida forzada.")
+            break
+
+        if opc == "1":
+            opcion_resumen_red(grafo)
+            pausar()
+        elif opc == "2":
+            limpiar_pantalla()
+            ejecutar_dijkstra(grafo)
+            pausar()
+        elif opc == "3":
+            limpiar_pantalla()
+            ejecutar_bellman_ford(grafo)
+            ejecutar_floyd_warshall(grafo)
+            pausar()
+        elif opc == "4":
+            limpiar_pantalla()
+            ejecutar_recorridos_fundamentales(grafo)
+            pausar()
+        elif opc == "5":
+            limpiar_pantalla()
+            ejecutar_localizacion(grafo)
+            pausar()
+        elif opc == "6":
+            limpiar_pantalla()
+            ejecutar_simulacion(grafo)
+            itinerarios_cache = ejecutar_itinerarios(grafo)
+            pausar()
+        elif opc == "7":
+            limpiar_pantalla()
+            ejecutar_comparacion(grafo)
+            pausar()
+        elif opc == "8":
+            opcion_abrir_mapa(grafo, itinerarios_cache)
+            pausar()
+        elif opc == "9":
+            opcion_ejecutar_pruebas()
+            pausar()
+        elif opc == "10":
+            itinerarios_cache = ejecutar_pipeline_completo(grafo)
+            pausar()
+        elif opc == "0":
+            limpiar_pantalla()
+            print("\n  👋 Gracias por utilizar el sistema de optimización logística.")
+            print("     Universidad de los Llanos — 2026-II\n")
+            break
+        else:
+            print("\n  ⚠️ Opción no válida. Intente de nuevo.")
+            pausar()
 
 
 if __name__ == "__main__":
