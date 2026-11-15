@@ -31,7 +31,7 @@ BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 ROOT = os.path.abspath(os.path.join(BASE, '..'))
 ASSETS = os.path.join(BASE, 'Assets')
 OUT_DOCX = os.path.join(BASE, 'Informe_Proyecto_Final_Grafos.docx')
-OUT_PDF = os.path.join(BASE, 'Informe_Proyecto_Final_Grafos.pdf')
+OUT_PDF = os.path.join(BASE, 'Informe_Proyecto_Final_Grafos_Word.pdf')
 
 FONT = 'Times New Roman'
 BLACK = RGBColor(0, 0, 0)
