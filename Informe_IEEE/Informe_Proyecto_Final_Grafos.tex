@@ -6,35 +6,50 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{titlesec}
+\usepackage{array}
+\usepackage{xcolor}
 
 \titleformat{\section}[block]{\normalsize\bfseries\filcenter}{\Roman{section}.}{0.4em}{}
 \titlespacing*{\section}{0pt}{3.0pt plus 1pt minus 1pt}{1.5pt plus 1pt minus 1pt}
 
 \setlength{\abovedisplayskip}{3pt plus 1pt minus 1pt}
 \setlength{\belowdisplayskip}{3pt plus 1pt minus 1pt}
-\setlength{\textfloatsep}{6pt plus 1pt minus 1pt}
-\setlength{\floatsep}{5pt plus 1pt minus 1pt}
-\setlength{\intextsep}{5pt plus 1pt minus 1pt}
+\setlength{\textfloatsep}{5pt plus 1pt minus 1pt}
+\setlength{\floatsep}{4pt plus 1pt minus 1pt}
+\setlength{\intextsep}{4pt plus 1pt minus 1pt}
 
-\title{\vspace{-1.2cm}%
-\large\bfseries MODELADO MEDIANTE GRAFOS MULTIMODALES Y OPTIMIZACIÓN DE LA CADENA DE FRÍO PARA PESCA ARTESANAL EN PUERTO GAITÁN, META}
-
-\author{\normalsize\textbf{Yair Armando Ospino Herrera} (160005565) \quad $\bullet$ \quad \textbf{Harold Esteban Padilla Díaz} (160005567)\\[0.10cm]
-\small Facultad de Ciencias Básicas e Ingeniería --- Ingeniería en Sistemas\\[-0.05cm]
-\small Universidad de los Llanos, Villavicencio, Colombia}
-
-\date{\vspace{-0.5cm}\small Noviembre de 2026}
+\newsavebox{\logobox}
 
 \begin{document}
 
-\maketitle
+\sbox{\logobox}{\includegraphics[width=1.55cm]{Assets/logounillanos.png}}
 
-\begin{abstract}
-\noindent En este trabajo se modela la red logística y comercial pesquera artesanal de Puerto Gaitán (Meta) como un grafo dirigido ponderado multimodal ($|V| = 25$ vértices y $|E| = 41$ aristas) con el propósito de erradicar la pérdida poscaptura de cachama de río (\textit{Colossoma macropomum}), la cual alcanza el $40\%$ debido a temperaturas de $30\,^\circ\text{C}$ y a la carencia de refrigeración continua. A partir del censo de 33 fichas cartográficas de 7 asociaciones pesqueras ($265.8\text{ kg/día}$), la red hidrográfica real del IGAC ($12,413$ nodos en \textit{rios.shp}) y ruteo vial OSRM sobre la Ruta Nacional 40, se codificaron desde cero en Python 3.14 los algoritmos de Dijkstra (con heap binario), Bellman-Ford, Floyd-Warshall, BFS, DFS y el Problema de Localización de Instalaciones (FLP Greedy). Se dio solución rigurosa a las cuatro incógnitas operacionales: (i) BFS determinó que el $85.7\%$ de los puertos pesqueros accede a un nodo de acopio o frío en 1 o 2 saltos topológicos; (ii) Dijkstra y DFS fijaron itinerarios óptimos hacia Bogotá D.C. ($\sim 295\text{ km}$) limitando la exposición sin frío a un intervalo de $0.08\text{ a }2.20\text{ h}$, cumpliendo ampliamente el umbral sanitario de $4.0\text{ h}$ de la FAO; (iii) FLP demostró que la apertura del Centro Frío Puerto Gaitán ($F02$, $\$3.0\text{M COP/mes}$) garantiza el $100\%$ de cobertura regional a un costo unitario de $\$59,080\text{ COP/kg}$, ahorrando $\$10.0\text{M COP}$ mensuales respecto a la operación de tres plantas; y (iv) el análisis de regresión lineal empírica estableció una tasa fluvial de $3.64\text{ min/km}$ ($v = 16.5\text{ km/h}$, $R^2 = 0.999$) frente a $0.92\text{ min/km}$ terrestre, demostrando que la navegación fluvial representa el cuello de botella físico de la cadena.
-
-\vspace{0.12cm}
-\noindent \textbf{Palabras clave---}Cadena de frío, caminos mínimos, \textit{Colossoma macropomum}, Dijkstra, grafos dirigidos, localización de instalaciones, multimodalidad, OSRM.
-\end{abstract}
+\twocolumn[{%
+  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}m{1.6cm}m{13.2cm}m{1.5cm}}
+    \centering\usebox{\logobox} &
+    \centering
+    {\fontsize{10.5pt}{12pt}\selectfont\textbf{UNIVERSIDAD DE LOS LLANOS}}\\[0.05cm]
+    {\fontsize{8.8pt}{10.5pt}\selectfont Facultad de Ciencias Básicas e Ingeniería --- Ingeniería en Sistemas}\\[0.03cm]
+    {\fontsize{8.2pt}{9.8pt}\selectfont\textit{Estructuras de Datos (Corte 3: Grafos y Optimización) --- Villavicencio, Colombia}} &
+    \rule{1.5cm}{0pt}
+  \end{tabular*}
+  
+  \vspace{0.20cm}
+  \centering
+  {\fontsize{11.5pt}{13.5pt}\selectfont\textbf{MODELADO MEDIANTE GRAFOS MULTIMODALES Y OPTIMIZACIÓN DE LA CADENA DE FRÍO PARA PESCA ARTESANAL EN PUERTO GAITÁN, META}}\\[0.15cm]
+  {\fontsize{8.8pt}{10.5pt}\selectfont\textbf{Yair Armando Ospino Herrera} (160005565) \quad $\bullet$ \quad \textbf{Harold Esteban Padilla Díaz} (160005567)}\\[0.05cm]
+  {\fontsize{8.2pt}{9.8pt}\selectfont\textit{Facultad de Ciencias Básicas e Ingeniería --- Ingeniería en Sistemas, Universidad de los Llanos, Villavicencio, Colombia}}\\[0.18cm]
+  
+  \noindent\fcolorbox{black!15}{black!3}{%
+    \parbox{0.98\textwidth}{%
+      \centering\textbf{\small Resumen}\\[0.06cm]
+      \fontsize{8.2pt}{9.8pt}\selectfont
+      En este trabajo se modela la red logística y comercial pesquera artesanal de Puerto Gaitán (Meta) como un grafo dirigido ponderado multimodal ($|V| = 25$ vértices y $|E| = 41$ aristas) con el propósito de erradicar la pérdida poscaptura de cachama de río (\textit{Colossoma macropomum}), la cual alcanza el $40\%$ debido a temperaturas de $30\,^\circ\text{C}$ y a la carencia de refrigeración continua. A partir del censo de 33 fichas cartográficas de 7 asociaciones pesqueras ($265.8\text{ kg/día}$), la red hidrográfica real del IGAC ($12,413$ nodos en \textit{rios.shp}) y ruteo vial OSRM sobre la Ruta Nacional 40, se codificaron desde cero en Python 3.14 los algoritmos de Dijkstra (con heap binario), Bellman-Ford, Floyd-Warshall, BFS, DFS y el Problema de Localización de Instalaciones (FLP Greedy). Se dio solución rigurosa a las cuatro incógnitas operacionales: (i) BFS determinó que el $85.7\%$ de los puertos pesqueros accede a un nodo de acopio o frío en 1 o 2 saltos topológicos; (ii) Dijkstra y DFS fijaron itinerarios óptimos hacia Bogotá D.C. ($\sim 295\text{ km}$) limitando la exposición sin frío a un intervalo de $0.08\text{ a }2.20\text{ h}$, cumpliendo ampliamente el umbral sanitario de $4.0\text{ h}$ de la FAO; (iii) FLP demostró que la apertura del Centro Frío Puerto Gaitán ($F02$, $\$3.0\text{M COP/mes}$) garantiza el $100\%$ de cobertura regional a un costo unitario de $\$59,080\text{ COP/kg}$, ahorrando $\$10.0\text{M COP}$ mensuales respecto a la operación de tres plantas; y (iv) el análisis de regresión lineal empírica estableció una tasa fluvial de $3.64\text{ min/km}$ ($v = 16.5\text{ km/h}$, $R^2 = 0.999$) frente a $0.92\text{ min/km}$ terrestre, demostrando que la navegación fluvial representa el cuello de botella físico de la cadena.\\[0.06cm]
+      \textbf{Palabras clave---}Cadena de frío, caminos mínimos, \textit{Colossoma macropomum}, Dijkstra, grafos dirigidos, localización de instalaciones, multimodalidad, OSRM.
+    }%
+  }
+  \vspace{0.25cm}
+}]
 
 \section{Introducción}
 La pesca artesanal en el municipio de Puerto Gaitán (Meta) constituye la base económica de comunidades ribereñas en los ríos Meta, Manacacías e Iteviare. La captura se concentra en especies reofílicas de alto valor comercial, predominantemente la cachama de río (\textit{Colossoma macropomum}). No obstante, las temperaturas ambiente medias de la Orinoquía ($30\,^\circ\text{C}$) aceleran el rigor mortis y la proliferación microbiana en el tejido muscular, provocando pérdidas poscaptura de hasta el $40\%$ antes de alcanzar los mercados urbanos [1, 2].
