@@ -1,7 +1,7 @@
 \documentclass[10pt,twocolumn,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish,es-tabla]{babel}
-\usepackage[left=1.45cm,right=1.45cm,top=1.35cm,bottom=1.35cm,columnsep=0.55cm]{geometry}
+\usepackage[left=1.35cm,right=1.35cm,top=1.15cm,bottom=1.15cm,columnsep=0.50cm]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -10,13 +10,13 @@
 \usepackage{xcolor}
 
 \titleformat{\section}[block]{\normalsize\bfseries\filcenter}{\Roman{section}.}{0.4em}{}
-\titlespacing*{\section}{0pt}{3.0pt plus 1pt minus 1pt}{1.5pt plus 1pt minus 1pt}
+\titlespacing*{\section}{0pt}{2.2pt plus 1pt minus 1pt}{1.0pt plus 1pt minus 1pt}
 
-\setlength{\abovedisplayskip}{3pt plus 1pt minus 1pt}
-\setlength{\belowdisplayskip}{3pt plus 1pt minus 1pt}
-\setlength{\textfloatsep}{5pt plus 1pt minus 1pt}
-\setlength{\floatsep}{4pt plus 1pt minus 1pt}
-\setlength{\intextsep}{4pt plus 1pt minus 1pt}
+\setlength{\abovedisplayskip}{2pt plus 1pt minus 1pt}
+\setlength{\belowdisplayskip}{2pt plus 1pt minus 1pt}
+\setlength{\textfloatsep}{3pt plus 1pt minus 1pt}
+\setlength{\floatsep}{3pt plus 1pt minus 1pt}
+\setlength{\intextsep}{3pt plus 1pt minus 1pt}
 
 \newsavebox{\logobox}
 
@@ -34,25 +34,25 @@
     \rule{1.5cm}{0pt}
   \end{tabular*}
   
-  \vspace{0.20cm}
+  \vspace{0.10cm}
   \centering
-  {\fontsize{11.5pt}{13.5pt}\selectfont\textbf{MODELADO MEDIANTE GRAFOS MULTIMODALES Y OPTIMIZACIÓN DE LA CADENA DE FRÍO PARA PESCA ARTESANAL EN PUERTO GAITÁN, META}}\\[0.15cm]
-  {\fontsize{8.8pt}{10.5pt}\selectfont\textbf{Yair Armando Ospino Herrera} (160005565) \quad $\bullet$ \quad \textbf{Harold Esteban Padilla Díaz} (160005567)}\\[0.05cm]
-  {\fontsize{8.2pt}{9.8pt}\selectfont\textit{Facultad de Ciencias Básicas e Ingeniería --- Ingeniería en Sistemas, Universidad de los Llanos, Villavicencio, Colombia}}\\[0.18cm]
+  {\fontsize{11.5pt}{13.5pt}\selectfont\textbf{OPTIMIZACIÓN DE CENTROS DE REFRIGERACIÓN Y MODELADO MULTIMODAL DE LA CADENA DE FRÍO PARA PESCA ARTESANAL EN PUERTO GAITÁN, META}}\\[0.10cm]
+  {\fontsize{8.8pt}{10.5pt}\selectfont\textbf{Yair Armando Ospino Herrera} (160005565) \quad $\bullet$ \quad \textbf{Harold Esteban Padilla Díaz} (160005567)}\\[0.03cm]
+  {\fontsize{8.2pt}{9.8pt}\selectfont\textit{Facultad de Ciencias Básicas e Ingeniería --- Ingeniería en Sistemas, Universidad de los Llanos, Villavicencio, Colombia}}\\[0.10cm]
   
   \noindent\fcolorbox{black!15}{black!3}{%
     \parbox{0.98\textwidth}{%
       \centering\textbf{\small Resumen}\\[0.06cm]
       \fontsize{8.2pt}{9.8pt}\selectfont
-      En el marco de la Escuela de Campo Agropecuaria (ECA C05-01-2026-003, Unillanos--AUNAP) y para resolver la pregunta directriz: \textit{¿Cómo mejorar la eficiencia de los procesos de captura y acopio mediante el fortalecimiento de capacidades tecnológicas en San Miguel, Plaza de Mercado y Puente Arimena?}, se modela la red logística pesquera de Puerto Gaitán (Meta) como un grafo dirigido ponderado multimodal ($|V| = 25$ vértices y $|E| = 41$ aristas) con el propósito de erradicar la pérdida poscaptura de cachama de río (\textit{Colossoma macropomum}), la cual alcanza el $40\%$ por temperaturas de $30\,^\circ\text{C}$ y carencia de frío continuo. Integrando el censo de 33 fichas cartográficas de 7 asociaciones pesqueras ($265.8\text{ kg/día}$), la hidrografía real del IGAC ($12,413$ nodos en \textit{rios.shp}) y ruteo OSRM sobre la Ruta Nacional 40, se codificaron desde cero en Python 3.14 los algoritmos de Dijkstra (con heap binario y poda dura de inocuidad), Bellman-Ford, Floyd-Warshall, BFS, DFS y el Problema de Localización de Instalaciones (FLP Greedy). Se resolvieron cuantitativamente las cuatro incógnitas: (i) BFS demostró que el $85.7\%$ de los puertos accede a su acopio natural o frío en 1 o 2 saltos ($< 0.50\text{ h}$); (ii) Dijkstra y DFS fijaron itinerarios óptimos a Bogotá D.C. ($\sim 295\text{ km}$) limitando la exposición sin frío a $0.08\text{ a }2.20\text{ h}$, cumpliendo el límite de $4.0\text{ h}$ de la FAO y minimizando la merma biológica a $< 6.38\%$; (iii) FLP probó que abrir la planta de Puerto Gaitán ($F02$, $\$3.0\text{M COP/mes}$) garantiza el $100\%$ de cobertura regional a $\$59,080\text{ COP/kg}$, ahorrando $\$10.0\text{M COP}$ mensuales respecto a 3 plantas; y (iv) la regresión lineal empírica estableció una tasa fluvial de $3.64\text{ min/km}$ ($16.5\text{ km/h}$, $R^2 = 0.999$) frente a $0.92\text{ min/km}$ terrestre, definiendo a la navegación fluvial como el cuello de botella crítico de la cadena.\\[0.06cm]
-      \textbf{Palabras clave---}Cadena de frío, caminos mínimos, \textit{Colossoma macropomum}, Dijkstra, ECA, grafos dirigidos, localización de instalaciones, multimodalidad, OSRM.
+      En el marco de la Escuela de Campo Agropecuaria (ECA C05-01-2026-003, Unillanos--AUNAP) y para responder la pregunta directriz: \textit{¿Cómo mejorar la eficiencia de los procesos de captura y acopio mediante el fortalecimiento de capacidades tecnológicas en San Miguel, Plaza de Mercado y Puente Arimena?}, este artículo resuelve el Problema de Localización de Instalaciones (FLP) para determinar \textbf{dónde ubicar los centros de refrigeración} que minimicen el costo y eliminen las pérdidas poscaptura de la pesca artesanal multiespecífica (bagres, carácidos y especies de río no especificadas o indeterminadas por vacío de información en campo). Bajo temperaturas de $30\,^\circ\text{C}$, se modela la red logística como un grafo dirigido ponderado multimodal ($|V| = 25, |E| = 41$). Integrando 33 fichas de 7 asociaciones pesqueras ($265.8\text{ kg/día}$), la hidrografía del IGAC ($12,413$ nodos en \textit{rios.shp}) y ruteo OSRM sobre la Ruta Nacional 40, se codificaron desde cero en Python 3.14 los algoritmos de Dijkstra (con heap binario y poda dura de inocuidad), Bellman-Ford, Floyd-Warshall, BFS, DFS y FLP Greedy. Se resolvieron cuantitativamente las cuatro incógnitas: (i) BFS demostró que el $85.7\%$ de los puertos accede a su acopio natural o frío en 1 o 2 saltos ($< 0.50\text{ h}$); (ii) Dijkstra y DFS fijaron itinerarios óptimos a Bogotá D.C. ($\sim 295\text{ km}$) limitando la exposición sin frío a $0.08\text{ a }2.20\text{ h}$, cumpliendo la cota de $4.0\text{ h}$ de la FAO y reduciendo la merma biológica a $< 6.38\%$; (iii) FLP probó que ubicar la planta frigorífica en Puerto Gaitán Casco Urbano ($F02$, $\$3.0\text{M COP/mes}$) garantiza el $100\%$ de cobertura regional a $\$59,080\text{ COP/kg}$, ahorrando $\$10.0\text{M COP}$ mensuales respecto a 3 plantas; y (iv) la regresión lineal empírica estableció una tasa fluvial de $3.64\text{ min/km}$ ($16.5\text{ km/h}$, $R^2 = 0.999$) frente a $0.92\text{ min/km}$ terrestre, definiendo el radio seguro de navegación fluvial en $65.90\text{ km}$.\\[0.06cm]
+      \textbf{Palabras clave---}Cadena de frío, caminos mínimos, especies multiespecíficas, FLP, grafos dirigidos, inocuidad alimentaria, localización de instalaciones, OSRM.
     }%
   }
-  \vspace{0.25cm}
+  \vspace{0.12cm}
 }]
 
 \section{Introducción}
-La pesca artesanal en el municipio de Puerto Gaitán (Meta) constituye el sustento de comunidades ribereñas sobre las cuencas de los ríos Meta, Manacacías e Iteviare. La extracción se concentra en especies reofílicas de alto valor comercial, predominantemente la cachama de río (\textit{Colossoma macropomum}). No obstante, las temperaturas ambiente medias de la Orinoquía ($30\,^\circ\text{C}$) aceleran el rigor mortis y la proliferación microbiana en el tejido muscular, provocando pérdidas poscaptura de hasta el $40\%$ antes de alcanzar los mercados urbanos [1, 2]. En el marco del proyecto de investigación y extensión de la Escuela de Campo Agropecuaria (ECA C05-01-2026-003, Unillanos--AUNAP), este trabajo responde a la pregunta de investigación rectora: \textit{¿Cómo mejorar la eficiencia de los procesos de captura y acopio mediante el fortalecimiento de capacidades tecnológicas?} articulando los puntos de extracción con los tres centros de acopio estratégicos de la cuenca: San Miguel ($A01$), Plaza de Mercado ($A02$) y Puente Arimena ($A03$).
+La pesca artesanal en el municipio de Puerto Gaitán (Meta) sustenta a cientos de familias ribereñas a lo largo de las cuencas de los ríos Meta, Manacacías e Iteviare. A diferencia de monocultivos comerciales, la extracción fluvial es marcadamente multiespecífica e incluye grandes silúridos (bagre rayado \textit{Pseudoplatystoma punctifer}, blanquillo \textit{Sorubim cuspicaudus}, capaz, amarilo), carácidos (bocachico, yamú, cachama \textit{Colossoma macropomum}) y un volumen sustancial de \textbf{especies de río indeterminadas o no especificadas} debido a la escasez de caracterización biométrica en campo y al sub-registro pesquero regional. Ante la ausencia de parámetros bioquímicos específicos para cada especie desconocida, todas comparten una vulnerabilidad fisiológica crítica: las temperaturas ambiente de $30\,^\circ\text{C}$ aceleran el rigor mortis, la autólisis y la proliferación microbiana, generando pérdidas poscaptura de hasta el $40\%$ sin frío continuo [1, 2]. En articulación con el proyecto ECA C05-01-2026-003 (Unillanos--AUNAP), este trabajo responde a la pregunta de investigación rectora: \textit{¿Cómo mejorar la eficiencia de los procesos de captura y acopio mediante el fortalecimiento de capacidades tecnológicas?} Esto conduce al problema logístico cardinal: \textbf{¿dónde ubicar los puntos de refrigeración?} para blindar la captura multiespecífica dentro de la cota de inocuidad ($t_{\max} \le 4.0\text{ h}$), articulando los caladeros con los tres acopios estratégicos de la cuenca: San Miguel ($A01$), Plaza de Mercado ($A02$) y Puente Arimena ($A03$).
 
 Desde la perspectiva formal de las estructuras de datos, un sistema multimodal de transporte se modela rigurosamente como un grafo dirigido ponderado $G = (V, E)$, representado en memoria mediante listas de adyacencia sobre tablas hash con costo espacial óptimo $\mathcal{O}(|V| + |E|)$ [3]. Para capturar con fidelidad la física del transporte, cada arista dirigida $e = (u, v) \in E$ se pondera mediante una función multicriterio normalizada de seis componentes:
 \begin{equation}
@@ -79,7 +79,7 @@ El desarrollo del proyecto se ejecutó en Python 3.14 con una arquitectura orien
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.64\linewidth]{Assets/figura_1_topologia_col.png}
+    \includegraphics[width=0.57\linewidth]{Assets/figura_1_topologia_col.png}
     \caption{Topología del grafo logístico multimodal (25 vértices y 41 aristas) en 4 capas funcionales con restricciones ambientales $H$ y térmicas $D$.}
     \label{fig:topologia}
 \end{figure}
@@ -96,7 +96,7 @@ La propagación de incertidumbre en el transporte fluvial $\Delta t$ provocada p
     \Delta t = t \cdot \frac{\Delta v_{\text{canoa}}}{v_{\text{canoa}}} = 0.15 \cdot t
 \end{equation}
 
-\textbf{Resolución de las Incógnitas 1 y 2 (BFS, Dijkstra y DFS):} La Tabla~\ref{tab:ruteo} sintetiza los resultados cuantitativos de la Incógnita 1 (acopio o frío más cercano en saltos mínimos mediante BFS) y de la Incógnita 2 (itinerario óptimo y deterioro de cachama a Bogotá D.C. mediante Dijkstra y DFS).
+\textbf{Resolución de las Incógnitas 1 y 2 (BFS, Dijkstra y DFS):} La Tabla~\ref{tab:ruteo} sintetiza los resultados cuantitativos de la Incógnita 1 (acopio o frío más cercano en saltos mínimos mediante BFS) y de la Incógnita 2 (itinerario óptimo y deterioro de la captura multiespecífica a Bogotá D.C. mediante Dijkstra y DFS).
 
 \begin{table}[htbp]
 \centering
@@ -120,14 +120,14 @@ $P07$ Soplav. & $35.0$ & 2 ($A02$) & $P07 \to M03 \to F02 \to \text{Bog}$ & $0.3
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.64\linewidth]{Assets/grafica_1_bfs_col.png}
+    \includegraphics[width=0.57\linewidth]{Assets/grafica_1_bfs_col.png}
     \caption{Tiempo acumulado sin refrigeración por punto de captura frente al umbral crítico sanitario de 4.0 h de la FAO.}
     \label{fig:grafica_bfs}
 \end{figure}
 
 El análisis de la Tabla~\ref{tab:ruteo} y la Fig.~\ref{fig:grafica_bfs} demuestra que la totalidad de los puertos alcanza una instalación de frío muy por debajo del umbral crítico de $4.0\text{ h}$. Seis de los siete nodos acceden a refrigeración en menos de $0.50\text{ h}$ ($30\text{ min}$). El caso de mayor aislamiento geográfico corresponde a Puerto Trujillo ($P05$), el cual debe navegar $63\text{ km}$ sobre el río Iteviare y superar la sabana destapada $D01$, acumulando $2.20 \pm 0.33\text{ h}$ sin frío y un deterioro muscular de $6.38\%$, preservando plenamente su aptitud comercial [1]. Adicionalmente, el costo ambiental infinito asignado a los hábitats protegidos desvió eficazmente el tráfico de $P04$, evitando bordear la reserva ecológica $H01$.
 
-\textbf{Resolución de la Incógnita 3 (Localización Óptima FLP):} El algoritmo FLP Greedy evaluó cinco configuraciones operacionales (Tabla~\ref{tab:flp} y Fig.~\ref{fig:grafica_flp}). La solución óptima seleccionó como única sede el Centro Frío Puerto Gaitán ($F02$, $\$3.0\text{M COP/mes}$), el cual asegura el $100\%$ de cobertura regional con un costo unitario consolidado de $\$59,080\text{ COP/kg}$, erradicando el sobrecosto de $\$10.0\text{M COP}$ mensuales derivado de operar tres plantas simultáneas ($\$104,444\text{ COP/kg}$).
+\textbf{Resolución de la Incógnita 3 (Dónde Ubicar los Puntos de Frío - FLP):} El algoritmo FLP resolvió formalmente la ubicación óptima de las plantas frigoríficas evaluando los candidatos $J = \{F01, F02, F03\}$ (Tabla~\ref{tab:flp} y Fig.~\ref{fig:grafica_flp}). La sede óptima seleccionada fue el Centro Frío Puerto Gaitán ($F02$, $\$3.0\text{M COP/mes}$) en el casco urbano. Esta localización es superior porque: (i) posee red trifásica y muelle central ($M03$); (ii) se articula contiguamente con la Plaza de Mercado ($A02$); y (iii) su capacidad ($5,000\text{ kg}$) absorbe el $100\%$ de la captura regional multiespecífica ($265.8\text{ kg/día}$) a $\$59,080\text{ COP/kg}$, ahorrando $\$10.0\text{M COP}$ mensuales respecto a 3 plantas ($\$104,444\text{ COP/kg}$). Para acopios distantes ($A01$ San Miguel y $A03$ Puente Arimena), la respuesta tecnológica consiste en módulos de frío pasivo (silos de hielo solar y cavas) que actúan como pre-enfriadores hacia $F02$.
 
 \begin{table}[htbp]
 \centering
@@ -149,7 +149,7 @@ Solo $F03$ Puerto López & 1 & $17.1\%$ & $\$13,023,272$ & $\$59,080$ \\ \hline
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.64\linewidth]{Assets/grafica_2a_dfs_col.png}
+    \includegraphics[width=0.57\linewidth]{Assets/grafica_2a_dfs_col.png}
     \caption{Comparación de costos operativos mensuales y selección óptima del centro frigorífico $F02$ en Puerto Gaitán.}
     \label{fig:grafica_flp}
 \end{figure}
@@ -170,7 +170,7 @@ Este resultado matemático convalida la robustez de la red, puesto que el puerto
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.64\linewidth]{Assets/grafica_2b_regresion_col.png}
+    \includegraphics[width=0.57\linewidth]{Assets/grafica_2b_regresion_col.png}
     \caption{Regresión lineal de tiempos de tránsito fluvial y carretero vs. distancia de tramo con coeficientes de correlación $R^2$.}
     \label{fig:grafica_reg}
 \end{figure}
@@ -182,22 +182,17 @@ Este resultado matemático convalida la robustez de la red, puesto que el puerto
 
 2. \textbf{Incógnita 2 (Itinerarios Dijkstra y DFS):} Los recorridos óptimos hacia Bogotá D.C. ($\sim 295\text{ km}$) registraron tiempos sin frío de entre $0.08\text{ y }2.20\text{ h}$, cumpliendo al $100\%$ el estándar de inocuidad de $4.0\text{ h}$ de la FAO y manteniendo el deterioro bacteriano por debajo del $6.38\%$, con estricta evasión de hábitats protegidos ($H01, H02$).
 
-3. \textbf{Incógnita 3 (Localización Óptima FLP):} La optimización determinó que el Centro Frío Puerto Gaitán ($F02$) en el casco urbano centraliza la totalidad de la captura regional ($265.8\text{ kg/día}$) a un costo de $\$59,080\text{ COP/kg}$, ahorrando $\$10.0\text{M COP}$ mensuales respecto a la operación de tres plantas.
+3. \textbf{Incógnita 3 (Dónde Ubicar los Puntos de Frío - FLP):} La optimización determinó que la ubicación óptima para la planta frigorífica central es Puerto Gaitán Casco Urbano ($F02$), contigua a la Plaza de Mercado ($A02$), pues abastece el $100\%$ de la captura multiespecífica regional ($265.8\text{ kg/día}$) a $\$59,080\text{ COP/kg}$, ahorrando $\$10.0\text{M COP/mes}$ frente a 3 plantas. En los acopios periféricos San Miguel ($A01$) y Puente Arimena ($A03$), se instalan silos de hielo solar como nodos de frío primario.
 
 4. \textbf{Incógnita 4 (Cinemática Multimodal):} El ajuste empírico comprobó una respuesta lineal estricta con $R^2 \ge 0.998$, demostrando que la navegación fluvial ($3.64\text{ min/km}$) es 3.96 veces más lenta que la terrestre ($0.92\text{ min/km}$) y deduciendo un radio de cobertura seguro de hasta $65.90\text{ km}$.
 
 \section*{Referencias}
-\footnotesize
-\noindent [1] FAO, «El pescado fresco: su calidad y cambios de calidad», \textit{Colección FAO: Pesca}, N$^\circ$ 348, Roma, Italia, 1999.
-
-\noindent [2] SciELO, «Cinética de deterioro y vida útil de \textit{Colossoma macropomum} bajo almacenamiento refrigerado», \textit{Revista MVZ Córdoba}, vol. 24, n$^\circ$ 2, pp. 7240--7248, 2019.
-
-\noindent [3] T. H. Cormen, C. E. Leiserson, R. L. Rivest, y C. Stein, \textit{Introduction to Algorithms}, 3a ed. Cambridge, MA: MIT Press, 2009, pp. 651--698.
-
-\noindent [4] S. L. Hakimi, «Optimum locations of switching centers and the absolute centers and medians of a graph», \textit{Operations Research}, vol. 12, n$^\circ$ 3, pp. 450--459, 1964.
-
-\noindent [5] G. Laporte, S. Nickel, y F. Saldanha-da-Gama, \textit{Location Science}, 2a ed. Cham, Suiza: Springer, 2019, pp. 115--148.
-
-\noindent [6] J. R. Taylor, \textit{An Introduction to Error Analysis: The Study of Uncertainties in Physical Measurements}, 2a ed. Sausalito, CA: Univ. Science Books, 1997, pp. 45--78.
+\fontsize{7.5pt}{8.8pt}\selectfont
+\noindent [1] FAO, «El pescado fresco: su calidad y cambios de calidad», \textit{Colección FAO: Pesca}, N$^\circ$ 348, Roma, Italia, 1999.\\[0.02cm]
+\noindent [2] SciELO, «Cinética de deterioro y vida útil de peces tropicales y \textit{Colossoma macropomum} bajo almacenamiento», \textit{Rev. MVZ Córdoba}, 24(2), 2019.\\[0.02cm]
+\noindent [3] T. Cormen, C. Leiserson, R. Rivest, y C. Stein, \textit{Introduction to Algorithms}, 3a ed. Cambridge: MIT Press, 2009.\\[0.02cm]
+\noindent [4] S. L. Hakimi, «Optimum locations of switching centers and absolute medians of a graph», \textit{Oper. Res.}, 12(3), 1964.\\[0.02cm]
+\noindent [5] G. Laporte, S. Nickel, y F. Saldanha-da-Gama, \textit{Location Science}, 2a ed. Cham: Springer, 2019.\\[0.02cm]
+\noindent [6] J. R. Taylor, \textit{An Introduction to Error Analysis: The Study of Uncertainties in Physical Measurements}, 2a ed. Sausalito, 1997.
 
 \end{document}
