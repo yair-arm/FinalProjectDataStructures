@@ -108,17 +108,18 @@ def obtener_geometrias_grafo(
 
     for i, arista in enumerate(grafo.aristas):
         clave = f"{arista.origen}-{arista.destino}"
-
-        # Si ya está en caché, saltar
         es_fluvial = arista.tipo_via == "fluvial"
-        if clave in cache and cache[clave]:
-            # Una entrada fluvial con <= 2 puntos es una línea recta: recalcular
-            if not (es_fluvial and len(cache[clave]) <= 2):
-                continue
 
         n_o = grafo.obtener_nodo(arista.origen)
         n_d = grafo.obtener_nodo(arista.destino)
         if not n_o or not n_d:
+            continue
+
+        previo = cache.get(clave) or []
+        # Las rutas viales válidas en caché se reutilizan (OSRM es remoto);
+        # las fluviales se recalculan siempre (cálculo local sobre rios.shp).
+        if not es_fluvial and _geometria_valida(previo):
+            cache[clave] = _anclar_extremos(previo, n_o, n_d)
             continue
 
         coords = None
@@ -151,16 +152,19 @@ def obtener_geometrias_grafo(
                       f"usando línea recta")
 
         if coords:
-            cache[clave] = coords
+            cache[clave] = _anclar_extremos(coords, n_o, n_d)
+        elif _geometria_valida(previo):
+            # Sin red disponible: conservar la geometría real previa
+            cache[clave] = _anclar_extremos(previo, n_o, n_d)
         else:
-            # Línea recta como fallback
+            # Línea recta como último recurso
             cache[clave] = [
                 [n_o.longitud, n_o.latitud],
                 [n_d.longitud, n_d.latitud],
             ]
 
         # Rate limiting: esperar entre consultas OSRM
-        if nuevas > 0 and arista.tipo_via != "fluvial":
+        if not es_fluvial:
             time.sleep(0.5)
 
     # Guardar caché
@@ -217,6 +221,30 @@ def obtener_geometria_ruta(
                 coords_completas.append([n_d.longitud, n_d.latitud])
 
     return coords_completas
+
+
+def _geometria_valida(coords: List[List[float]]) -> bool:
+    """True si la geometría tiene al menos 3 puntos distintos (no es una recta)."""
+    if not coords or len(coords) < 3:
+        return False
+    return len({(round(c[0], 5), round(c[1], 5)) for c in coords}) >= 3
+
+
+def _anclar_extremos(coords: List[List[float]], n_o, n_d) -> List[List[float]]:
+    """
+    Une la geometría real a las coordenadas exactas de los nodos.
+
+    OSRM y la red fluvial ajustan los extremos a la vía/cauce más cercano;
+    se añade el tramo de enlace para que la ruta nazca y termine en el nodo.
+    """
+    inicio = [n_o.longitud, n_o.latitud]
+    fin = [n_d.longitud, n_d.latitud]
+    res = [list(c) for c in coords]
+    if res[0] != inicio:
+        res.insert(0, inicio)
+    if res[-1] != fin:
+        res.append(fin)
+    return res
 
 
 def _ruta_fluvial_real(

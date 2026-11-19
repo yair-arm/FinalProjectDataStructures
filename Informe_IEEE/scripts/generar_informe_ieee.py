@@ -182,18 +182,20 @@ pa_c.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 pa_c.paragraph_format.space_after = Pt(1.5)
 pa_c.paragraph_format.line_spacing = 1.02
 run_fmt(pa_c.add_run(
-    'En este trabajo se modela la red de comercialización de pesca artesanal de Puerto Gaitán (Meta) como un grafo dirigido ponderado '
-    'multimodal (|V| = 25 vértices y |E| = 41 aristas) para resolver la pérdida poscaptura de cachama de río (Colossoma macropomum), '
-    'la cual alcanza el 40 % debido a temperaturas de 30 °C y a la ausencia de infraestructura frigorífica. Integrando la digitalización de '
-    '33 encuestas cartográficas de 7 asociaciones pesqueras (265.8 kg/día), la red fluvial real del IGAC (12,413 vértices en rios.shp) y '
-    'rutas terrestres reales vía OSRM, se implementaron desde cero los algoritmos de Dijkstra (con heap binario), Bellman-Ford, '
-    'Floyd-Warshall, BFS, DFS y el Problema de Localización de Instalaciones (FLP Greedy). Se resolvieron las cuatro incógnitas operativas: '
-    '(i) BFS identificó el acceso más próximo a frío en 1 a 2 saltos para el 85.7 % de los puertos; (ii) Dijkstra y DFS trazaron itinerarios '
-    'hacia Bogotá D.C. (~295 km) reduciendo la exposición sin frío a un rango de 0.08 a 2.20 h, cumpliendo el límite de 4.0 h de la FAO; '
-    '(iii) FLP determinó que la apertura del Centro Frío Puerto Gaitán (F02, $3.0M COP/mes) cubre el 100 % de la demanda regional con '
-    'un costo unitario de $59,080 COP/kg, ahorrando $10.0M COP mensuales frente a un esquema de tres plantas; y (iv) la regresión lineal '
-    'reveló una cinemática fluvial de 3.64 min/km (v = 16.5 km/h, R² = 0.999) frente a 0.92 min/km terrestre, demostrando que el cuello '
-    'de botella reside en la navegación fluvial y los transbordos en muelle.'
+    'En el marco de la Escuela de Campo Agropecuaria (ECA C05-01-2026-003, Unillanos--AUNAP) y para resolver la pregunta directriz: '
+    '¿Cómo mejorar la eficiencia de los procesos de captura y acopio mediante el fortalecimiento de capacidades tecnológicas en '
+    'San Miguel, Plaza de Mercado y Puente Arimena?, se modela la red de comercialización pesquera artesanal de Puerto Gaitán (Meta) '
+    'como un grafo dirigido ponderado multimodal (|V| = 25 vértices y |E| = 41 aristas) para erradicar la pérdida poscaptura de '
+    'cachama de río (Colossoma macropomum), la cual alcanza el 40 % debido a temperaturas de 30 °C y a la carencia de frío continuo. '
+    'Integrando el censo de 33 fichas cartográficas de 7 asociaciones pesqueras (265.8 kg/día), la red fluvial real del IGAC (12,413 '
+    'vértices en rios.shp) y rutas viales OSRM sobre la Ruta Nacional 40, se implementaron desde cero los algoritmos de Dijkstra '
+    '(con heap binario y poda de inocuidad), Bellman-Ford, Floyd-Warshall, BFS, DFS y el Problema de Localización de Instalaciones (FLP Greedy). '
+    'Se resolvieron cuantitativamente las cuatro incógnitas: (i) BFS demostró que el 85.7 % de los puertos accede a su acopio natural en 1 o 2 '
+    'saltos (< 0.50 h); (ii) Dijkstra y DFS fijaron itinerarios óptimos hacia Bogotá D.C. (~295 km) limitando la exposición sin frío a un '
+    'intervalo de 0.08 a 2.20 h, cumpliendo el límite de 4.0 h de la FAO y reduciendo la merma a < 6.38 %; (iii) FLP determinó que la apertura '
+    'del Centro Frío Puerto Gaitán (F02, $3.0M COP/mes) cubre el 100 % de la demanda regional con un costo de $59,080 COP/kg, ahorrando $10.0M '
+    'COP mensuales frente a tres plantas; y (iv) la regresión lineal estableció una tasa fluvial de 3.64 min/km (16.5 km/h, R² = 0.999) '
+    'frente a 0.92 min/km terrestre, probando que la navegación fluvial representa el cuello de botella crítico de la cadena.'
 ), 8.2)
 
 pa_kw = cell_a.add_paragraph()
@@ -201,7 +203,7 @@ pa_kw.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 pa_kw.paragraph_format.space_before = Pt(1)
 pa_kw.paragraph_format.space_after = Pt(0)
 run_fmt(pa_kw.add_run('Palabras clave---'), 8.2, bold=True)
-run_fmt(pa_kw.add_run('Cadena de frío, caminos mínimos, Colossoma macropomum, Dijkstra, grafos dirigidos, localización de instalaciones, multimodalidad, OSRM.'), 8.2)
+run_fmt(pa_kw.add_run('Cadena de frío, caminos mínimos, Colossoma macropomum, Dijkstra, ECA, grafos dirigidos, localización de instalaciones, multimodalidad, OSRM.'), 8.2)
 
 def para(content, *more_content, before=0, after=2.0, line_spacing=1.03):
     p = doc.add_paragraph()
@@ -279,11 +281,15 @@ set_section_cols(sec_body, n_cols=2, space=300)
 
 heading('I.  Introducción')
 
-para('La pesca artesanal en el municipio de Puerto Gaitán (Meta) sustenta la economía de cientos de familias ribereñas distribuidas '
+para('La pesca artesanal en el municipio de Puerto Gaitán (Meta) sustenta la economía de comunidades ribereñas distribuidas '
      'en las cuencas de los ríos Meta, Manacacías e Iteviare. La captura se concentra en especies reofílicas de alto valor comercial, '
      'particularmente la cachama de río (', ('i', 'Colossoma macropomum'), '). Sin embargo, la ausencia de cuartos de frío en las riberas '
      'y las altas temperaturas de la Orinoquía (', ('m', r('30 °C')), ') aceleran el rigor mortis y la proliferación bacteriana, '
-     'provocando pérdidas de hasta el 40 % del producto antes de llegar a plazas de mercado [1], [2].')
+     'provocando pérdidas de hasta el 40 % del producto antes de llegar a plazas de mercado [1], [2]. En el marco del proyecto de '
+     'investigación y extensión de la Escuela de Campo Agropecuaria (ECA C05-01-2026-003, Unillanos--AUNAP), este trabajo responde a la '
+     'pregunta de investigación rectora: ', ('i', '¿Cómo mejorar la eficiencia de los procesos de captura y acopio mediante el '
+     'fortalecimiento de capacidades tecnológicas?'), ' articulando los puntos de extracción con los tres centros de acopio estratégicos '
+     'de la cuenca: San Miguel (A01), Plaza de Mercado (A02) y Puente Arimena (A03).')
 
 para('En la ciencia de las estructuras de datos, una red de transporte con diversos modos y nodos de transferencia se modela formalmente '
      'como un grafo dirigido ponderado ', ('m', r('G = (V, E)')), ' almacenado mediante listas de adyacencia indexadas por tablas hash '
@@ -493,8 +499,9 @@ para(('b', 'Verificación cruzada Bellman-Ford y Floyd-Warshall: '), 'Bellman-Fo
 
 heading('IV.  Conclusiones')
 
-para(('b', '1. Resolución de la Incógnita 1 (BFS): '), 'El recorrido BFS demostró que el 85.7 % (6/7) de los puertos pesqueros accede a un '
-     'nodo de acopio o frío en 1 o 2 saltos topológicos, alcanzando refrigeración en tiempos inferiores a 0.50 h (30 min), lo que '
+para(('b', '1. Incógnita 1 y Eficiencia en Acopio (ECA): '), 'El recorrido BFS demostró que el fortalecimiento tecnológico de los tres acopios '
+     '(A01 San Miguel, A02 Plaza de Mercado y A03 Puente Arimena) permite al 85.7 % (6/7) de los puertos de captura transferir su producción '
+     'en máximo 2 saltos topológicos, conteniendo la degradación en tiempos inferiores a 0.50 h (30 min), lo que '
      'garantiza la contención temprana del rigor mortis en la cachama.')
 
 para(('b', '2. Resolución de la Incógnita 2 (Dijkstra y DFS): '), 'Los itinerarios óptimos hacia Bogotá D.C. (~295 km) registraron tiempos '

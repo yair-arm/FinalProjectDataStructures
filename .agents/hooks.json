@@ -1,0 +1,24 @@
+{
+  "auto-repo-map": {
+    "enabled": true,
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "python ../scripts/generar_repo_map.py --hook",
+        "timeout": 10
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "edit_file|write_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ../scripts/generar_repo_map.py --hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

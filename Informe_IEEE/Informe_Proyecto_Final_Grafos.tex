@@ -1,7 +1,7 @@
 \documentclass[10pt,twocolumn,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish,es-tabla]{babel}
-\usepackage[left=1.5cm,right=1.5cm,top=1.45cm,bottom=1.45cm,columnsep=0.55cm]{geometry}
+\usepackage[left=1.45cm,right=1.45cm,top=1.35cm,bottom=1.35cm,columnsep=0.55cm]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -44,15 +44,15 @@
     \parbox{0.98\textwidth}{%
       \centering\textbf{\small Resumen}\\[0.06cm]
       \fontsize{8.2pt}{9.8pt}\selectfont
-      En este trabajo se modela la red logística y comercial pesquera artesanal de Puerto Gaitán (Meta) como un grafo dirigido ponderado multimodal ($|V| = 25$ vértices y $|E| = 41$ aristas) con el propósito de erradicar la pérdida poscaptura de cachama de río (\textit{Colossoma macropomum}), la cual alcanza el $40\%$ debido a temperaturas de $30\,^\circ\text{C}$ y a la carencia de refrigeración continua. A partir del censo de 33 fichas cartográficas de 7 asociaciones pesqueras ($265.8\text{ kg/día}$), la red hidrográfica real del IGAC ($12,413$ nodos en \textit{rios.shp}) y ruteo vial OSRM sobre la Ruta Nacional 40, se codificaron desde cero en Python 3.14 los algoritmos de Dijkstra (con heap binario), Bellman-Ford, Floyd-Warshall, BFS, DFS y el Problema de Localización de Instalaciones (FLP Greedy). Se dio solución rigurosa a las cuatro incógnitas operacionales: (i) BFS determinó que el $85.7\%$ de los puertos pesqueros accede a un nodo de acopio o frío en 1 o 2 saltos topológicos; (ii) Dijkstra y DFS fijaron itinerarios óptimos hacia Bogotá D.C. ($\sim 295\text{ km}$) limitando la exposición sin frío a un intervalo de $0.08\text{ a }2.20\text{ h}$, cumpliendo ampliamente el umbral sanitario de $4.0\text{ h}$ de la FAO; (iii) FLP demostró que la apertura del Centro Frío Puerto Gaitán ($F02$, $\$3.0\text{M COP/mes}$) garantiza el $100\%$ de cobertura regional a un costo unitario de $\$59,080\text{ COP/kg}$, ahorrando $\$10.0\text{M COP}$ mensuales respecto a la operación de tres plantas; y (iv) el análisis de regresión lineal empírica estableció una tasa fluvial de $3.64\text{ min/km}$ ($v = 16.5\text{ km/h}$, $R^2 = 0.999$) frente a $0.92\text{ min/km}$ terrestre, demostrando que la navegación fluvial representa el cuello de botella físico de la cadena.\\[0.06cm]
-      \textbf{Palabras clave---}Cadena de frío, caminos mínimos, \textit{Colossoma macropomum}, Dijkstra, grafos dirigidos, localización de instalaciones, multimodalidad, OSRM.
+      En el marco de la Escuela de Campo Agropecuaria (ECA C05-01-2026-003, Unillanos--AUNAP) y para resolver la pregunta directriz: \textit{¿Cómo mejorar la eficiencia de los procesos de captura y acopio mediante el fortalecimiento de capacidades tecnológicas en San Miguel, Plaza de Mercado y Puente Arimena?}, se modela la red logística pesquera de Puerto Gaitán (Meta) como un grafo dirigido ponderado multimodal ($|V| = 25$ vértices y $|E| = 41$ aristas) con el propósito de erradicar la pérdida poscaptura de cachama de río (\textit{Colossoma macropomum}), la cual alcanza el $40\%$ por temperaturas de $30\,^\circ\text{C}$ y carencia de frío continuo. Integrando el censo de 33 fichas cartográficas de 7 asociaciones pesqueras ($265.8\text{ kg/día}$), la hidrografía real del IGAC ($12,413$ nodos en \textit{rios.shp}) y ruteo OSRM sobre la Ruta Nacional 40, se codificaron desde cero en Python 3.14 los algoritmos de Dijkstra (con heap binario y poda dura de inocuidad), Bellman-Ford, Floyd-Warshall, BFS, DFS y el Problema de Localización de Instalaciones (FLP Greedy). Se resolvieron cuantitativamente las cuatro incógnitas: (i) BFS demostró que el $85.7\%$ de los puertos accede a su acopio natural o frío en 1 o 2 saltos ($< 0.50\text{ h}$); (ii) Dijkstra y DFS fijaron itinerarios óptimos a Bogotá D.C. ($\sim 295\text{ km}$) limitando la exposición sin frío a $0.08\text{ a }2.20\text{ h}$, cumpliendo el límite de $4.0\text{ h}$ de la FAO y minimizando la merma biológica a $< 6.38\%$; (iii) FLP probó que abrir la planta de Puerto Gaitán ($F02$, $\$3.0\text{M COP/mes}$) garantiza el $100\%$ de cobertura regional a $\$59,080\text{ COP/kg}$, ahorrando $\$10.0\text{M COP}$ mensuales respecto a 3 plantas; y (iv) la regresión lineal empírica estableció una tasa fluvial de $3.64\text{ min/km}$ ($16.5\text{ km/h}$, $R^2 = 0.999$) frente a $0.92\text{ min/km}$ terrestre, definiendo a la navegación fluvial como el cuello de botella crítico de la cadena.\\[0.06cm]
+      \textbf{Palabras clave---}Cadena de frío, caminos mínimos, \textit{Colossoma macropomum}, Dijkstra, ECA, grafos dirigidos, localización de instalaciones, multimodalidad, OSRM.
     }%
   }
   \vspace{0.25cm}
 }]
 
 \section{Introducción}
-La pesca artesanal en el municipio de Puerto Gaitán (Meta) constituye la base económica de comunidades ribereñas en los ríos Meta, Manacacías e Iteviare. La captura se concentra en especies reofílicas de alto valor comercial, predominantemente la cachama de río (\textit{Colossoma macropomum}). No obstante, las temperaturas ambiente medias de la Orinoquía ($30\,^\circ\text{C}$) aceleran el rigor mortis y la proliferación microbiana en el tejido muscular, provocando pérdidas poscaptura de hasta el $40\%$ antes de alcanzar los mercados urbanos [1, 2].
+La pesca artesanal en el municipio de Puerto Gaitán (Meta) constituye el sustento de comunidades ribereñas sobre las cuencas de los ríos Meta, Manacacías e Iteviare. La extracción se concentra en especies reofílicas de alto valor comercial, predominantemente la cachama de río (\textit{Colossoma macropomum}). No obstante, las temperaturas ambiente medias de la Orinoquía ($30\,^\circ\text{C}$) aceleran el rigor mortis y la proliferación microbiana en el tejido muscular, provocando pérdidas poscaptura de hasta el $40\%$ antes de alcanzar los mercados urbanos [1, 2]. En el marco del proyecto de investigación y extensión de la Escuela de Campo Agropecuaria (ECA C05-01-2026-003, Unillanos--AUNAP), este trabajo responde a la pregunta de investigación rectora: \textit{¿Cómo mejorar la eficiencia de los procesos de captura y acopio mediante el fortalecimiento de capacidades tecnológicas?} articulando los puntos de extracción con los tres centros de acopio estratégicos de la cuenca: San Miguel ($A01$), Plaza de Mercado ($A02$) y Puente Arimena ($A03$).
 
 Desde la perspectiva formal de las estructuras de datos, un sistema multimodal de transporte se modela rigurosamente como un grafo dirigido ponderado $G = (V, E)$, representado en memoria mediante listas de adyacencia sobre tablas hash con costo espacial óptimo $\mathcal{O}(|V| + |E|)$ [3]. Para capturar con fidelidad la física del transporte, cada arista dirigida $e = (u, v) \in E$ se pondera mediante una función multicriterio normalizada de seis componentes:
 \begin{equation}
@@ -62,7 +62,7 @@ donde $t$ es el tiempo de tránsito normalizado, $c$ el costo de flete, $r$ la c
 \begin{equation}
     D_{\text{acum}} = D_0 + \sum_{i=1}^n k_i \cdot t_i
 \end{equation}
-donde la constante de descomposición base es $k = 2.5\%\text{/h}$ y asciende a $k_D = 1.5\,k = 3.75\%\text{/h}$ en tramos destapados sin sombra (zonas críticas $D$). El límite máximo de inocuidad alimentaria fijado por la FAO para pescado tropical fresco sin refrigerar es $t_{\max} = 4.0\text{ h}$ ($240\text{ min}$) [1]. Al arribar a un centro de frío ($F$), el producto desciende a $0\,^\circ\text{C}$ (relación hielo/pescado 1:1), reiniciando el reloj térmico a $0.0\text{ h}$ y asegurando una vida útil comercial de hasta $360\text{ h}$ (15 días) [1].
+donde la constante de descomposición base es $k = 2.5\%\text{/h}$ y asciende a $k_D = 1.5\,k = 3.75\%\text{/h}$ en tramos destapados sin sombra (zonas críticas $D$). El límite máximo de inocuidad alimentaria fijado por la FAO para pescado tropical fresco sin refrigerar es $t_{\max} = 4.0\text{ h}$ ($240\text{ min}$) [1], cota crítica para evitar la formación irreversible de histamina. Al arribar a un centro de frío ($F$), el producto desciende a $0\,^\circ\text{C}$ (relación hielo/pescado 1:1), reiniciando el reloj térmico a $0.0\text{ h}$ y asegurando una vida comercial de hasta $360\text{ h}$ (15 días) [1].
 
 \textbf{Estado del arte:} El análisis de redes y caminos mínimos se originó con los aportes seminales de Dijkstra (1959), Bellman-Ford (1958) y Floyd-Warshall (1962), orientados a distancias escalares sobre topologías discretas [3]. Posteriormente, Hakimi (1964) y Laporte et al. (2019) formalizaron el Problema de Localización de Instalaciones (FLP / $p$-mediana) para determinar la apertura óptima de infraestructuras minimizando inversión fija y acarreo [4, 5]. En años recientes, la optimización de cadenas agroalimentarias ha migrado hacia la articulación de grafos computacionales con Sistemas de Información Geográfica (SIG), integrando hidrografía vectorial con motores de ruteo vial como OSRM para suprimir las distorsiones de la distancia euclidiana [5].
 
@@ -73,18 +73,18 @@ El presente artículo resuelve cuatro incógnitas operacionales: (i) calcular co
 \section{Sección Experimental y Metodología}
 El desarrollo del proyecto se ejecutó en Python 3.14 con una arquitectura orientada a objetos modular, implementando las estructuras de datos y algoritmos desde cero, sin utilizar librerías de cálculo en grafos. El procedimiento experimental comprendió tres fases continuas:
 
-\textbf{1. Adquisición cartográfica y catálogo de red:} Con base en el censo de 33 fichas de campo levantadas con pescadores artesanales en Puerto Gaitán y Puerto López, se caracterizaron 7 asociaciones pesqueras (captura neta: $265.75\text{ kg/día}$). Se estructuraron 25 vértices clasificados en 7 tipos funcionales ($P$: 7 puertos de captura, $M$: 3 muelles de transbordo, $A$: 3 acopios rurales, $F$: 3 nodos frigoríficos candidatos, $D$: 2 zonas críticas de deterioro térmico, $H$: 2 hábitats de reserva ecológica y $V$: 5 mercados mayoristas con coordenadas verificadas en Puerto Gaitán, Villavicencio y Bogotá) interconectados por 41 aristas dirigidas.
+\textbf{1. Adquisición cartográfica y catálogo de red:} Con base en el censo de 33 fichas de campo de la ECA levantadas con pescadores artesanales en Puerto Gaitán y Puerto López, se caracterizaron 7 asociaciones pesqueras (captura neta: $265.75\text{ kg/día}$). Se estructuraron 25 vértices clasificados en 7 tipos funcionales ($P$: 7 puertos de captura, $M$: 3 muelles de transbordo, $A$: 3 acopios rurales en San Miguel, Plaza de Mercado y Puente Arimena, $F$: 3 nodos frigoríficos candidatos, $D$: 2 zonas críticas de deterioro térmico, $H$: 2 hábitats de reserva ecológica y $V$: 5 mercados mayoristas con coordenadas verificadas en Puerto Gaitán, Villavicencio y Bogotá) interconectados por 41 aristas dirigidas.
 
 \textbf{2. Construcción del doble grafo y ruteo geográfico:} Se implementó el Grafo Logístico Principal ($|V|=25, |E|=41$) mediante listas de adyacencia sobre tablas hash con complejidad temporal $\mathcal{O}(1)$ en búsquedas de vecindad. En paralelo, se procesó el shapefile hidrográfico oficial del IGAC (\textit{rios.shp}), construyendo un Grafo Fluvial Topológico continuo con $12,413$ nodos cuantizados a 5 decimales (precisión submétrica) y $24,790$ aristas de cauce, indexadas mediante una cuadrícula espacial hash de 447 celdas ($0.05^\circ \times 0.05^\circ$) para resolver con exactitud la navegación por meandros. Las aristas terrestres sobre la Ruta Nacional 40 se computaron con la API del motor OSRM, almacenando 41 polilíneas en caché JSON local.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.68\linewidth]{Assets/figura_1_topologia_col.png}
+    \includegraphics[width=0.64\linewidth]{Assets/figura_1_topologia_col.png}
     \caption{Topología del grafo logístico multimodal (25 vértices y 41 aristas) en 4 capas funcionales con restricciones ambientales $H$ y térmicas $D$.}
     \label{fig:topologia}
 \end{figure}
 
-\textbf{3. Ejecución algorítmica y control de calidad:} Se codificaron manualmente: Dijkstra con cola de prioridad basada en montículo binario (\textit{heapq}), Bellman-Ford con verificación de ciclos negativos, Floyd-Warshall sobre matriz adyacente, BFS con cola FIFO (\textit{deque}), DFS recursivo con retroceso y FLP Greedy con evaluación multicriterio. El entorno de trabajo contó con una suite de 40 pruebas unitarias automatizadas en pytest, visualizador cartográfico Leaflet/Folium y sistema de coordenadas WGS 84.
+\textbf{3. Ejecución algorítmica y control de calidad:} Se codificaron manualmente: Dijkstra con cola de prioridad binaria (\textit{heapq}) y poda de cota de inocuidad FAO, Bellman-Ford con verificación de ciclos negativos, Floyd-Warshall sobre matriz adyacente, BFS con cola FIFO (\textit{deque}), DFS recursivo con retroceso y FLP Greedy con evaluación multicriterio. El entorno de trabajo contó con una suite de 53 pruebas unitarias automatizadas en pytest, visualizador cartográfico Leaflet/Folium y sistema de coordenadas WGS 84.
 
 \section{Resultados y Análisis}
 \textbf{Clasificación de variables del sistema:}
@@ -120,7 +120,7 @@ $P07$ Soplav. & $35.0$ & 2 ($A02$) & $P07 \to M03 \to F02 \to \text{Bog}$ & $0.3
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.68\linewidth]{Assets/grafica_1_bfs_col.png}
+    \includegraphics[width=0.64\linewidth]{Assets/grafica_1_bfs_col.png}
     \caption{Tiempo acumulado sin refrigeración por punto de captura frente al umbral crítico sanitario de 4.0 h de la FAO.}
     \label{fig:grafica_bfs}
 \end{figure}
@@ -149,7 +149,7 @@ Solo $F03$ Puerto López & 1 & $17.1\%$ & $\$13,023,272$ & $\$59,080$ \\ \hline
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.68\linewidth]{Assets/grafica_2a_dfs_col.png}
+    \includegraphics[width=0.64\linewidth]{Assets/grafica_2a_dfs_col.png}
     \caption{Comparación de costos operativos mensuales y selección óptima del centro frigorífico $F02$ en Puerto Gaitán.}
     \label{fig:grafica_flp}
 \end{figure}
@@ -170,7 +170,7 @@ Este resultado matemático convalida la robustez de la red, puesto que el puerto
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.68\linewidth]{Assets/grafica_2b_regresion_col.png}
+    \includegraphics[width=0.64\linewidth]{Assets/grafica_2b_regresion_col.png}
     \caption{Regresión lineal de tiempos de tránsito fluvial y carretero vs. distancia de tramo con coeficientes de correlación $R^2$.}
     \label{fig:grafica_reg}
 \end{figure}
@@ -178,7 +178,7 @@ Este resultado matemático convalida la robustez de la red, puesto que el puerto
 \textbf{Verificación cruzada de algoritmos:} Bellman-Ford reprodujo con exactitud matemática el $100\%$ de los árboles de caminos mínimos computados por Dijkstra, confirmando la convergencia del sistema y la ausencia de ciclos negativos. La matriz de Floyd-Warshall verificó en tiempo constante $\mathcal{O}(1)$ que el tiempo total de tránsito multimodal entre los ríos de Puerto Gaitán y las plazas mayoristas de Bogotá oscila entre $6.38\text{ h}$ y $8.95\text{ h}$, arribando el pescado en óptimas condiciones organolépticas tras su estabilización a $0\,^\circ\text{C}$ en $F02$.
 
 \section{Conclusiones}
-1. \textbf{Incógnita 1 (Proximidad BFS):} La exploración en amplitud demostró que el $85.7\%$ ($6/7$) de los puertos de captura artesanal accede a un centro de acopio o frío en un máximo de 2 saltos topológicos, conteniendo el inicio de la descomposición en tiempos inferiores a $0.50\text{ h}$ ($30\text{ min}$).
+1. \textbf{Incógnita 1 y Eficiencia en Acopio (ECA):} La exploración en amplitud demostró que el fortalecimiento tecnológico de los tres acopios ($A01$ San Miguel, $A02$ Plaza de Mercado y $A03$ Puente Arimena) permite al $85.7\%$ ($6/7$) de los puertos de captura artesanal transferir su producción en máximo 2 saltos topológicos, conteniendo la degradación en tiempos inferiores a $0.50\text{ h}$ ($30\text{ min}$).
 
 2. \textbf{Incógnita 2 (Itinerarios Dijkstra y DFS):} Los recorridos óptimos hacia Bogotá D.C. ($\sim 295\text{ km}$) registraron tiempos sin frío de entre $0.08\text{ y }2.20\text{ h}$, cumpliendo al $100\%$ el estándar de inocuidad de $4.0\text{ h}$ de la FAO y manteniendo el deterioro bacteriano por debajo del $6.38\%$, con estricta evasión de hábitats protegidos ($H01, H02$).
 

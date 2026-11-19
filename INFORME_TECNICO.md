@@ -4,7 +4,11 @@
 ---
 
 ## 📋 Índice General
-1. [Planteamiento del Problema y Contexto Real](#1-planteamiento-del-problema-y-contexto-real)
+1. [Planteamiento del Problema, Problemáticas Reales (ECA) y Soluciones Algorítmicas](#1-planteamiento-del-problema-problemáticas-reales-eca-y-soluciones-algorítmicas)
+   - [1.1 Contexto Territorial y el Cuello de Botella Biológico-Térmico](#11-contexto-territorial-y-el-cuello-de-botella-biológico-térmico)
+   - [1.2 Jerarquía de Análisis y Orden de Prioridades del Proyecto](#12-jerarquía-de-análisis-y-orden-de-prioridades-del-proyecto)
+   - [1.3 Problemáticas de la ECA con Solución Matemática y Computable en $G=(V,E)$](#13-problemáticas-de-la-eca-con-solución-matemática-y-computable-en-gve)
+   - [1.4 Delimitación Interdisciplinar: Alcance Algorítmico vs. Áreas Externas](#14-delimitación-interdisciplinar-alcance-algorítmico-vs-áreas-externas)
 2. [Creación y Estructuras de Datos de los Grafos en Memoria](#2-creación-y-estructuras-de-datos-de-los-grafos-en-memoria)
    - [2.1 Grafo 1: Grafo Logístico Principal (`GrafoLogistico`)](#21-grafo-1-grafo-logístico-principal-grafologistico)
    - [2.2 Grafo 2: Grafo Topológico de la Red Fluvial (`RedFluvial`)](#22-grafo-2-grafo-topológico-de-la-red-fluvial-redfluvial)
@@ -31,13 +35,127 @@
 
 ---
 
-## 1. Planteamiento del Problema y Contexto Real
+## 1. Planteamiento del Problema, Problemáticas Reales (ECA) y Soluciones Algorítmicas
 
-En el municipio de **Puerto Gaitán (Meta, Colombia)**, las asociaciones de pescadores artesanales extraen diariamente alrededor de **265.75 kg/día** (con picos estacionales mucho mayores) en las cuencas de los ríos **Meta**, **Manacacías** e **Iteviare**. 
+### 1.1 Contexto Territorial y el Cuello de Botella Biológico-Térmico
 
-El pescado fresco es un alimento altamente perecedero: a la temperatura ambiente promedio de los Llanos Orientales ($30\ ^\circ\text{C}$), la actividad enzimática y bacteriana degrada el tejido muscular a una tasa base del **$2.5\%$ por cada hora sin refrigeración**, superando el límite sanitario admisible si permanece más de **$4.0\text{ horas}$** fuera de la cadena de frío ($0\ ^\circ\text{C}$).
+En el municipio de **Puerto Gaitán (Meta, Colombia)**, las asociaciones de pescadores artesanales extraen diariamente alrededor de **265.75 kg/día** (con picos estacionales mucho mayores) en las cuencas de los ríos **Meta**, **Manacacías** e **Iteviare** (e interconexión hídrica con los ríos Tomo, Muco, Guarrojo, Planas, Tillavá, Uva, Yucao y Metica).
 
-Para modelar y resolver este problema sin depender de aproximaciones irreales (como líneas rectas entre puntos o grafos simples de una sola variable), el proyecto construye un **sistema de doble grafo multimodal** donde cada río, muelle, camino veredal, centro de acopio, cuarto frío, zona crítica de calor, hábitat protegido y tienda de venta final opera con sus propias reglas matemáticas.
+El pescado fresco (especialmente la cachama *Colossoma macropomum* y grandes bagres) es un alimento altamente perecedero:
+- A la temperatura ambiente promedio de los Llanos Orientales ($30\ ^\circ\text{C}$), la actividad enzimática y bacteriana degrada el tejido muscular a una **tasa base del $2.5\%$ por cada hora sin refrigeración** (y del **$3.75\%/\text{h}$** en tramos expuestos de deterioro crítico `D`), con una vida útil total de apenas $6\text{ horas}$.
+- Existe un **límite sanitario estricto de la FAO de $4.0\text{ horas}$ ($240\text{ minutos}$)** fuera de la cadena de frío. Superar este umbral provoca multiplicación bacteriana acelerada, generación de **histamina** (riesgo tóxico irreversible) y pérdidas poscaptura de hasta el **$40\%$**.
+- Al ingresar a un centro de refrigeración ($0\ ^\circ\text{C}$) o mantener proporción de hielo $1:1$, el reloj térmico se estabiliza y la vida útil comercial se extiende hasta **$360\text{ horas}$ ($15\text{ días}$)**.
+
+Para modelar y resolver este problema sin depender de aproximaciones irreales (como líneas rectas entre puntos o grafos simples de una sola variable), el proyecto construye un **sistema de doble grafo multimodal** ($G = (V, E)$) donde cada río, muelle, camino veredal, centro de acopio, cuarto frío, zona crítica de calor, hábitat protegido y tienda de venta final opera con sus propias reglas matemáticas.
+
+---
+
+### 1.2 Jerarquía de Análisis y Orden de Prioridades del Proyecto
+
+Antes de ejecutar cualquier algoritmo de rutas o localización, el modelo establece una jerarquía estricta de análisis y priorización en cuatro niveles:
+
+1. **Prioridad 0 — El Reloj Biológico-Sanitario (Tiempo sin frío sobre distancia):**
+   Lo primordial no son los kilómetros lineales, sino el **tiempo acumulado de exposición térmica** antes de tocar hielo ($t_{\text{sin frío}} \le 4.0\text{ h}$). Un tramo corto en canoa por un meandro lento o una espera de $15\text{ minutos}$ al sol en un muelle sin techo degrada más el producto que decenas de kilómetros por vía pavimentada.
+2. **Prioridad 1 — Levantamiento Topológico y Flujo Multimodal Obligatorio (`ADR-04`, `ADR-06`):**
+   El pescado no puede saltar del río al camión frigorífico en línea recta. Debe cumplir la secuencia física real de la cuenca:
+   $$\text{Pesca }(P) \xrightarrow{\text{río}} \text{Muelle }(M) \xrightarrow{\text{acceso local}} \text{Acopio }(A) \xrightarrow{\text{carretera}} \text{Centro de Frío }(F) \xrightarrow{\text{carretera}} \text{Venta }(V)$$
+   *(Con la única excepción de `P06` Desembarcadero Central, ubicado en el casco urbano junto a `F02`).*
+3. **Prioridad 2 — Ponderación Multicriterio de 6 Factores en cada Arista (`ADR-02`):**
+   Cada arista $(i, j) \in E$ prioriza matemáticamente seis dimensiones operativas normalizadas:
+   $$w_{ij} = \underbrace{0.25\,\hat{t}_{ij}}_{\text{1.º Tiempo}} + \underbrace{0.20\,\hat{c}_{ij}}_{\text{2.º Costo}} + \underbrace{0.20\,r_{\text{comb},ij}}_{\text{3.º Riesgo}} + \underbrace{0.10\,\hat{p}_{ij}}_{\text{4.º Pérdida}} + \underbrace{0.10\,(1 - q_{ij})}_{\text{5.º Inestabilidad}} + \underbrace{0.05\,P_{\text{ret},ij}}_{\text{6.º Retraso}}$$
+4. **Prioridad 3 — Orden de Decisión Algorítmica:**
+   - **Primero (Restricciones duras innegociables):** Respetar la exclusión de hábitats protegidos (`H01`, `H02` con `evitar_restringidos=True`) y garantizar el $100\%$ de cobertura sanitaria ($t \le 4.0\text{ h}$).
+   - **Segundo (Optimización de rutas en grafos propios):** Calcular caminos mínimos con **Dijkstra** ($O((V+E)\log V)$), auditar consistencia y ausencia de ciclos negativos con **Bellman-Ford** ($O(V\cdot E)$) y construir la matriz global con **Floyd-Warshall** ($O(V^3)$).
+   - **Tercero (Eficiencia económica FLP):** Entre los escenarios que cumplen el límite sanitario de $4.0\text{ h}$, seleccionar la configuración de centros de frío que minimice la suma de costos fijos mensuales de operación, costos de transporte y merma térmica.
+
+---
+
+### 1.3 Problemáticas de la ECA con Solución Matemática y Computable en $G=(V,E)$
+
+En el marco de la **Escuela de Campo Agropecuaria (ECA — Proyecto Código `C05-01-2026-003`)** desarrollada junto a la Universidad de los Llanos (GRITOX, SUSA), la Alcaldía de Puerto Gaitán, la Corporación Kotsala y la AUNAP (*"Piscicultura Sostenible con Especies Nativas como Alternativa Productiva para Pescadores Artesanales durante la Veda Abril–Junio"*), se identifican seis problemáticas estructurales del sector pesquero y acuícola que **tienen solución matemática directa y computable** dentro de nuestra arquitectura de grafos:
+
+```mermaid
+flowchart LR
+    subgraph S1["1.3.1 Topología Dinámica"]
+        A["Veda Abril-Junio"] --> B["Grafo Bitemporal G_pesca / G_veda"]
+        B --> C["Conmutación a Nodos P_pisc"]
+    end
+    subgraph S2["1.3.2 Inocuidad y Frío"]
+        D["Riesgo Histamina > 4.0 h"] --> E["Dijkstra con Poda Temporal"]
+        E --> F["Proporción Hielo 1:1 en Peso Arista"]
+    end
+    subgraph S3["1.3.4 Localización y Territorio"]
+        G["Centros de Hielo / Resguardos"] --> H["FLP Costo Total + Filtro Nodos H/D"]
+    end
+    subgraph S4["1.3.6 Trazabilidad ICA/INVIMA"]
+        I["Registros Productivos y Lotes"] --> J["DAG de Eventos + Tablas Hash O(1)"]
+    end
+```
+
+#### 1.3.1. Modelado de la Veda mediante Grafos Bitemporales ($G_{\text{pesca}}$ y $G_{\text{veda}}$)
+* **Problemática planteada en la ECA:** Durante el periodo de **abril a junio** se prohíbe legal y biológicamente la captura extractiva en los ríos (veda de reproducción regulada por la AUNAP), activándose la **piscicultura sostenible con especies nativas** como alternativa productiva para sostener el ingreso y la seguridad alimentaria de las familias pescadoras.
+* **Solución algorítmica y de estructuras de datos:**
+  * Se modela la red logística como un **grafo dependiente del tiempo (*Time-Varying Graph*)** $G(t) = (V, E(t))$ gobernado por dos matrices de adyacencia o máscaras booleanas de activación de orígenes:
+    * **Régimen 1 — Captura Extractiva (Julio–Marzo, $G_{\text{pesca}}$):** Los vértices de origen activos $P$ corresponden a los 7 puntos de pesca artesanal sobre los ríos (`P01` a `P07`), con flujo predominantemente fluvial hacia los muelles `M01`–`M03`.
+    * **Régimen 2 — Época de Veda (Abril–Junio, $G_{\text{veda}}$):** Se inhabilitan las aristas de extracción fluvial y las fuentes activas del grafo conmutan a los nodos de estanques de piscicultura nativa ($P_{\text{pisc}}$) en tierra firme.
+  * **Efecto computable:** Al ejecutar **Dijkstra** y **Floyd-Warshall** bajo ambos regímenes, el sistema cuantifica automáticamente cómo se desplaza la centralidad de la red: durante la veda cae la carga sobre los muelles fluviales ($M$) y se incrementa el flujo sobre las aristas de `acceso_local` y los centros de acopio terrestres ($A$), permitiendo reasignar vehículos sin dejar ocioso el centro de frío `F02`.
+
+#### 1.3.2. Mitigación del Riesgo de Histamina: Restricción Dura de Inocuidad FAO ($t \le 4.0\text{ h}$)
+* **Problemática planteada en la ECA (Diapositivas 28–30):** La exposición del pescado a $30\ ^\circ\text{C}$ sin hielo provoca deterioro organoléptico acelerado (hundimiento ocular, pardeamiento de branquias, pérdida de firmeza) y **multiplicación bacteriana con formación de histamina** (intoxicación alimentaria grave que no se elimina ni siquiera cocinando o congelando el pescado posteriormente).
+* **Solución algorítmica y de estructuras de datos:**
+  * Se incorpora sobre el recorrido de caminos mínimos (**Dijkstra** y el simulador térmico `SimuladorCadenaFrio` en `src/optimization/cold_chain.py`) una restricción de **Camino Más Corto Restringido por Tiempo (*Constrained Shortest Path*)**:
+    $$\sum_{e \in \text{ruta}(P_i \to F_j)} t_{\text{efectivo}}(e) + \sum_{v \in \text{transbordos}} t_{\text{espera}}(v) \le t_{\text{límite FAO}} \quad (4.0\text{ h} = 240\text{ min})$$
+  * Cuando una ruta candidata hacia un centro de frío supera las $4.0\text{ horas}$ acumuladas sin refrigeración, el evaluador marca la ruta en **violación sanitaria (`cumple_limite_tiempo = False`)**, descarta la factibilidad operativa del escenario y cuantifica la merma acumulada tramo por tramo:
+    $$D_{\text{acum}} = D_0 + \sum_{k} \left(r_{\text{base}} \cdot \phi_D(v_k) \cdot t_k\right)$$
+    donde $r_{\text{base}} = 2.5\%/\text{h}$ a $30\ ^\circ\text{C}$ y $\phi_D(v_k) = 1.5$ si el tramo cruza una zona crítica de deterioro (`D01`, `D02`).
+
+#### 1.3.3. Dimensionamiento y Ruteo del Insumo Crítico: Proporción Hielo-Pescado ($1:1$)
+* **Problemática planteada en la ECA (Diapositiva 29):** Las Buenas Prácticas de Pesca (BPP) exigen transportar y aplicar una **proporción óptima de hielo en escarcha y pescado de $1:1$ en peso** ($1\text{ kg}$ de hielo por cada $1\text{ kg}$ de pescado) en recipientes isotérmicos no porosos (plástico sanitario o fibra de vidrio, erradicando la madera).
+* **Solución algorítmica y de estructuras de datos:**
+  * En nuestro modelo (`RELACION_HIELO_PESCADO = 1.0` y `COSTO_HIELO_KG = 800` COP/kg en `src/utils/constants.py`), el abastecimiento de hielo duplica la masa bruta movilizada en la cadena ($M_{\text{total}} = Q_{\text{pescado}} + Q_{\text{hielo}} = 2\,Q_{\text{pescado}}$).
+  * El peso multicriterio $w_{ij}$ y el evaluador económico integran tanto el costo del insumo de hielo ($c_{\text{hielo}} = 800\text{ COP/kg} \times q_i$) como la restricción de capacidad de carga por arista (`capacidad_kg` en `aristas.csv` y `CAPACIDAD_VEHICULO_KG = 2000`), permitiendo modelar el **flujo bidireccional**: envío de hielo desde el centro de frío (`F02`) hacia los muelles (`M01`–`M03`) y retorno con pescado refrigerado.
+
+#### 1.3.4. Ubicación Óptima de Centros de Hielo y Frío: Facility Location Problem (FLP)
+* **Problemática planteada en la ECA (Diapositiva 30):** Se plantea la disyuntiva de *"implementar centros de acopio de hielo gestionados por cooperativas en los muelles"* frente a centralizar plantas frigoríficas donde exista red eléctrica confiable y acceso vial.
+* **Solución algorítmica y de estructuras de datos:**
+  * Nuestro módulo `src/optimization/facility_location.py` y `scenario_evaluator.py` resuelve formalmente el **Problema de Localización de Instalaciones con Restricciones de Capacidad y Tiempo (Capacitated / p-Median & Fixed-Charge FLP)**:
+    $$\min_{y_j,\,x_{ij}} \;\; \sum_{j \in F} f_j\,y_j \;+\; \sum_{i \in P} \sum_{j \in F} \Big(c_{\text{transp}}(i,j) + c_{\text{hielo}}(i) + c_{\text{merma}}(i,j)\Big)\,x_{ij}$$
+    sujeto a:
+    $$\sum_{j \in F} x_{ij} = 1 \;\;\forall i \in P, \qquad x_{ij} \le y_j, \qquad t_{\text{sin frío}}(i, j)\,x_{ij} \le 4.0\text{ h}, \qquad \sum_{i \in P} q_i\,x_{ij} \le C_j\,y_j$$
+  * **Resultado demostrable:** El algoritmo prueba matemáticamente que abrir **únicamente el Centro de Frío `F02` (Puerto Gaitán urbano)** logra el **$100\%$ de cumplimiento sanitario FAO** para las 7 asociaciones (incluso la más lejana `P05` Puerto Trujillo a $63\text{ km}$, que ingresa a frío en $2.20\text{ h} \le 4.0\text{ h}$) con un costo total optimizado de **$\$13,023,272\text{ COP/mes}$**, ahorrando **$\$10,000,000\text{ COP/mes}$** frente a operar simultáneamente las 3 plantas (`F01 + F02 + F03` = $\$23,023,272\text{ COP/mes}$), y abasteciendo de hielo a los muelles como nodos de transferencia rápida.
+
+#### 1.3.5. Restricciones Ambientales, Hidrografía SIG y Territorios Indígenas (Nodos `H` y `D`)
+* **Problemática planteada en la ECA (Diapositivas 6–8, 13–15, 25):** El ordenamiento pesquero (Cormacarena VIAM y SIMA Orinoquia) exige respetar áreas de conservación ecológica, humedales de reproducción y la jurisdicción territorial de una densa red de **resguardos indígenas** (Sikuani de Awóliba, Corocito-Yopalito-Gualabo, Vencedor-Piripiri-Guamito-Matanegra).
+* **Solución algorítmica y de estructuras de datos:**
+  * **Nodos tipo `H` (`H01` Humedal Río Manacacías y `H02` Zona Reserva Indígena Corocito):** Son vértices reales del grafo con el atributo `restriccion_ambiental = True`. Cuando los algoritmos **Dijkstra**, **Bellman-Ford** y **Floyd-Warshall** se invocan con `evitar_restringidos = True`, podan en tiempo $O(1)$ cualquier transición que utilice un nodo `H` como vértice intermedio de paso, garantizando rutas respetuosas con las zonas de reserva y desove.
+  * **Nodos tipo `D` (`D01` Paso Crítico Río Iteviare y `D02` Cruce Veredal La Culebra):** Modelan cuellos de botella geográficos donde las embarcaciones o vehículos sufren exposición solar extrema y baja velocidad, aplicando el multiplicador `FACTOR_ZONA_DETERIORO = 1.5` sobre la pérdida térmica del tramo.
+
+#### 1.3.6. Estructuras de Datos para Trazabilidad y Registros Productivos (BPP / BPM / ICA / INVIMA)
+* **Problemática planteada en la ECA (Diapositivas 22–27, 31):** Tanto la pesca extractiva como la piscicultura requieren llevar **registros sistemáticos** (biometrías, densidades de siembra, mortalidad, temperaturas, tiempos de traslado y lotes) para asegurar rentabilidad y trazabilidad sanitaria ante el ICA y el INVIMA.
+* **Solución algorítmica y de estructuras de datos:**
+  * **Grafo Acíclico Dirigido (DAG) por lote:** Cada itinerario logístico de un lote capturado o cosechado constituye un camino dirigido acíclico con sellos de tiempo y estado térmico por etapa:
+    $$\text{Captura/Cosecha }(P,\,t_0) \longrightarrow \text{Desembarque/Eviscerado }(M,\,t_1) \longrightarrow \text{Acopio e Hielo }(A,\,t_2) \longrightarrow \text{Abatimiento }0\ ^\circ\text{C }(F,\,t_3) \longrightarrow \text{Mercado }(V,\,t_4)$$
+  * **Indexación en Tablas Hash $O(1)$:** El grafo principal almacena `_nodos: Dict[str, Nodo]` y `_adyacencia: Dict[str, List[Arista]]` mediante tablas hash en memoria con complejidad de consulta $O(1)$, donde cada `TramoRuta` registra exactamente `{origen, destino, distancia_km, tiempo_h, temp_c, perdida_tramo_pct, perdida_acumulada_pct, kg_restantes, refrigerado}`, proporcionando el registro digital auditable de principio a fin.
+
+---
+
+### 1.4 Delimitación Interdisciplinar: Alcance Algorítmico vs. Áreas Externas
+
+Para mantener rigor ingenieril, el proyecto distingue explícitamente qué problemas resuelve nuestro software mediante **Estructuras de Datos y Teoría de Grafos** y cuáles dependen de **disciplinas externas complementarias**:
+
+| Problemática de la Cadena Pesquera (ECA) | ¿Se resuelve con Grafos y Algoritmos? | Cómo actúa nuestro proyecto / Qué área externa se requiere |
+| :--- | :---: | :--- |
+| **Ruteo fluvial/terrestre antes del límite de $4.0\text{ h}$ (Histamina)** | **SÍ (100%)** | Resuelto con **Dijkstra + Simulación Térmica** sobre red real `rios.shp` y OSRM (`t <= 2.20 h` en todas las asociaciones). |
+| **Dónde instalar centros de frío/hielo minimizando costos** | **SÍ (100%)** | Resuelto con **FLP (Greedy / MILP)** y evaluación de 5 escenarios (`Solo F02` ahorra $\$10\text{M COP/mes}$). |
+| **Desvío de rutas fuera de hábitats y reservas protegidas** | **SÍ (100%)** | Resuelto mediante nodos `H` (`restriccion_ambiental=True`) y filtro `evitar_restringidos=True` en Dijkstra/Bellman-Ford/Floyd-Warshall. |
+| **Transición operativa en época de veda (abril–junio)** | **SÍ (Modelado)** | Modelable mediante conmutación de nodos origen en grafo bitemporal ($G_{\text{pesca}} \leftrightarrow G_{\text{veda}}$). |
+| **Trazabilidad de lotes, tiempos, costos y mermas** | **SÍ (100%)** | Estructuras `Nodo`, `Arista` (19 atributos), `ResultadoSimulacion` y exportación CSV/GeoJSON en $O(1)$. |
+| **Medición química de mercurio ($\text{Hg}$) y metales pesados en peces** | **NO (Externa)** | Requiere **Toxicología Ambiental y Espectrometría de Laboratorio** (Grupo GRITOX — Unillanos). |
+| **Definición biológica de fechas de desove y vedas** | **NO (Externa)** | Requiere **Biología Pesquera e Ictiología Continental** (AUNAP / Grupo SUSA). |
+| **Inspección sensorial en vivo (brillo ocular, color de branquias)** | **NO (Externa)** | Requiere **Medicina Veterinaria, Zootecnia y Control de Calidad Organoléptico** en puerto (INVIMA). |
+| **Sustitución física de cajas de madera por plástico y techado de muelles** | **NO (Externa)** | Requiere **Inversión Pública, Ingeniería Civil Portuaria y Dotación Cooperativa** (Alcaldía / AUNAP). |
+| **Acuerdos de co-manejo y consulta previa con resguardos indígenas** | **NO (Externa)** | Requiere **Gobernanza Territorial, Derecho Constitucional y Trabajo Social Comunitario**. |
+| **Formulación nutricional de alimento y sanidad en estanques piscícolas** | **NO (Externa)** | Requiere **Ingeniería Acuícola y Buenas Prácticas Acuícolas (BPA — ICA)**. |
 
 ---
 

@@ -12,11 +12,13 @@ Curso Estructuras de Datos (603301). La cadena pesquera se modela como **grafo d
 con algoritmos **implementados desde cero** (no NetworkX para cálculo).
 
 ```
+PROJECT_MAP.md                  Mapa AST automático (~270 líneas = 97% ahorro de contexto) — LEER PRIMERO
+scripts/generar_repo_map.py     Generador AST del mapa (auto-ejecutado por .agents/hooks.json)
 main.py                         Pipeline de 10 pasos (punto de entrada)
 src/models/                     nodo.py, arista.py (19 campos, peso multicriterio 6 factores), grafo_logistico.py (lista de adyacencia)
 src/algorithms/                 dijkstra.py (heap), floyd_warshall.py, bellman_ford.py
 src/optimization/               facility_location.py (greedy + PuLP opcional), cold_chain.py, scenario_evaluator.py
-src/visualization/              folium_map.py (mapa HTML), route_geometry.py (OSRM + ríos), felt_exporter.py, graph_plotter.py
+src/visualization/              folium_map.py (mapa HTML), route_geometry.py (OSRM + ríos), felt_exporter.py, graph_plotter.py, graph_slides.py
 src/utils/                      constants.py, geo_utils.py, data_loader.py
 data/csv/                       nodos_pesca.csv (P), nodos_centros.csv (F,A,M,D,H), nodos_destinos.csv (V), aristas.csv
 data/shapefiles/rios.*          Red fluvial real
@@ -29,6 +31,13 @@ tests/                          pytest (debe quedar 100 % verde)
 D zona de deterioro (penaliza pérdida) · H hábitat protegido (restricción ambiental, se evita) · V venta.
 **Tipos de vía:** `fluvial`, `acceso_local`, `terrestre`.
 **Flujo real:** `P ─río→ M ─acceso→ A ─carretera→ F ─carretera→ V`.
+
+### Protocolo Automático de Contexto Eficiente (AST Repo-Map — OBLIGATORIO)
+Para reducir el consumo de tokens (~97% menos) y acelerar cada respuesta **sin que el usuario deba pedirlo**:
+1. **Mapa primero:** Antes de explorar `src/`, `main.py` o `tests/`, lee `PROJECT_MAP.md` (índice AST con todas las clases, firmas con tipos, rangos `[Lstart-Lend]` y esquemas CSV).
+2. **Lectura quirúrgica:** Usa `read_file` con `StartLine` y `EndLine` exactos según `PROJECT_MAP.md`. Nunca cargues archivos completos (especialmente `graph_slides.py`) salvo que sea estrictamente necesario.
+3. **Prohibido abrir archivos pesados completos:** Nunca leas enteros `data/output/*.html`, `data/output/rutas_cache.json`, `data/geojson/*.geojson` ni `data/shapefiles/*`; inspecciónalos vía comandos/scripts o `Select-String`.
+4. **Auto-actualización:** `.agents/hooks.json` ejecuta `scripts/generar_repo_map.py --hook` automáticamente al iniciar sesión (`SessionStart`) y tras editar/escribir archivos (`PostToolUse`). Si alteras código desde terminal, corre `python scripts/generar_repo_map.py --if-stale`.
 
 ### Convenciones obligatorias
 - Todo texto visible, docstrings y comentarios **en español**. Type hints y docstrings en funciones públicas.

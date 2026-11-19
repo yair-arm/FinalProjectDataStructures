@@ -12,12 +12,109 @@ import heapq
 from typing import Dict, List, Optional, Tuple
 
 from ..models.grafo_logistico import GrafoLogistico
+from ..utils.constants import TIEMPO_MAX_SIN_FRIO_H, TIEMPO_TRANSBORDO_MUELLE_H
 
 
 def _restringido(grafo: GrafoLogistico, nodo_id: str) -> bool:
     """Indica si el nodo tiene restricción ambiental (hábitat protegido)."""
     nodo = grafo.obtener_nodo(nodo_id)
     return bool(nodo is not None and nodo.restriccion_ambiental)
+
+
+def _tiene_refrigeracion(grafo: GrafoLogistico, nodo_id: str) -> bool:
+    """Indica si el nodo abate temperatura (centro de frío F o acopio con frío)."""
+    nodo = grafo.obtener_nodo(nodo_id)
+    return bool(
+        nodo is not None
+        and nodo.tipo in ("F", "A")
+        and nodo.capacidad_frio_kg > 0
+    )
+
+
+def dijkstra_con_cota_inocuidad(
+    grafo: GrafoLogistico,
+    origen: str,
+    destino: str,
+    tiempo_limite_h: float = TIEMPO_MAX_SIN_FRIO_H,
+    criterio: str = "peso",
+    evitar_restringidos: bool = True,
+) -> Tuple[float, List[str], float, bool]:
+    """
+    Camino Más Corto Restringido por Tiempo de Inocuidad FAO (Constrained Shortest Path).
+
+    Poda directamente dentro del montículo binario (`heapq`) cualquier rama cuyo
+    tiempo acumulado sin refrigeración (incluyendo +0.25 h en muelles M) supere
+    `tiempo_limite_h` (4.0 h = 240 min) antes de alcanzar un nodo frigorífico (F),
+    mitigando el riesgo biológico de formación de histamina.
+
+    Returns
+    -------
+    tuple (costo_total, camino, max_tiempo_sin_frio_h, cumple_inocuidad)
+    """
+    if origen not in grafo or destino not in grafo:
+        raise KeyError(f"Nodo '{origen}' o '{destino}' no existe en el grafo.")
+
+    # Cola de prioridad: (costo_acum, t_sin_frio_actual, max_t_sin_frio, nodo_actual, camino)
+    heap: List[Tuple[float, float, float, str, List[str]]] = [
+        (0.0, 0.0, 0.0, origen, [origen])
+    ]
+    mejor_estado: Dict[str, Tuple[float, float]] = {}
+
+    while heap:
+        costo_act, t_sin_frio, max_t_sf, u, camino = heapq.heappop(heap)
+
+        if u == destino:
+            return costo_act, camino, max_t_sf, (max_t_sf <= tiempo_limite_h)
+
+        prev_mejor = mejor_estado.get(u)
+        if (
+            prev_mejor is not None
+            and costo_act >= prev_mejor[0]
+            and t_sin_frio >= prev_mejor[1]
+        ):
+            continue
+        mejor_estado[u] = (costo_act, t_sin_frio)
+
+        for arista in grafo.obtener_aristas(u):
+            v = arista.destino
+            if v in camino:
+                continue
+            if evitar_restringidos and v != destino and _restringido(grafo, v):
+                continue
+
+            nodo_v = grafo.obtener_nodo(v)
+            espera_muelle = (
+                TIEMPO_TRANSBORDO_MUELLE_H
+                if (nodo_v is not None and nodo_v.tipo == "M")
+                else 0.0
+            )
+            nuevo_t_sin_frio = t_sin_frio + arista.tiempo_h + espera_muelle
+
+            # Poda dura de inocuidad FAO en el montículo binario
+            if nuevo_t_sin_frio > tiempo_limite_h:
+                continue
+
+            nuevo_max_sf = max(max_t_sf, nuevo_t_sin_frio)
+            if _tiene_refrigeracion(grafo, v):
+                nuevo_t_sin_frio = 0.0
+
+            peso_arista = (
+                arista.peso_default
+                if criterio == "peso"
+                else getattr(arista, criterio, arista.peso_default)
+            )
+            heapq.heappush(
+                heap,
+                (
+                    costo_act + peso_arista,
+                    nuevo_t_sin_frio,
+                    nuevo_max_sf,
+                    v,
+                    camino + [v],
+                ),
+            )
+
+    return float("inf"), [], float("inf"), False
 
 
 def dijkstra(grafo: GrafoLogistico,

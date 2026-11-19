@@ -87,6 +87,15 @@ def generar_mapa_interactivo(
     str : ruta absoluta del archivo HTML generado.
     """
     geo_cache = geometrias_reales or {}
+    if not geo_cache:
+        # Sin geometrías explícitas: usar la caché de vías/cauces reales
+        ruta_cache = OUTPUT_DIR / "rutas_cache.json"
+        if ruta_cache.exists():
+            try:
+                with open(ruta_cache, "r", encoding="utf-8") as f:
+                    geo_cache = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                geo_cache = {}
 
     # ── Calcular centro del mapa ─────────────────────────────
     lats = [n.latitud for n in grafo.nodos if n.latitud != 0]
@@ -360,11 +369,11 @@ def generar_mapa_interactivo(
 
     # ── Título ───────────────────────────────────────────────
     titulo_html = """
-    <div style="position:fixed; top:10px; left:60px; z-index:1000;
-         background:white; padding:10px 18px; border-radius:8px;
+    <div id="folium-title-card" style="position:fixed; top:10px; left:60px; z-index:1000;
+         background:white; color:#1d1d1f; padding:10px 18px; border-radius:8px;
          box-shadow:0 2px 6px rgba(0,0,0,0.3); font-family:Arial;">
       <b>🐟 Cadena de Frío — Pesca Artesanal</b><br>
-      <span style="font-size:12px; color:#666;">
+      <span style="font-size:12px; color:#555;">
         Puerto Gaitán, Meta, Colombia
       </span>
     </div>
@@ -373,6 +382,15 @@ def generar_mapa_interactivo(
 
     # ── Control de capas ─────────────────────────────────────
     folium.LayerControl(collapsed=False).add_to(mapa)
+
+    # ── Presentación interactiva por diapositivas (Mapa + Grafos Vial, Ríos y Mixto) ──
+    try:
+        from .graph_slides import generar_html_slides, generar_presentacion_html_autonoma
+        slides_html = generar_html_slides(grafo, geo_cache, itinerarios)
+        mapa.get_root().html.add_child(folium.Element(slides_html))
+        generar_presentacion_html_autonoma(grafo, geo_cache, itinerarios)
+    except Exception as exc:
+        print(f"  [!] No se pudieron inyectar diapositivas de grafos: {exc}")
 
     # ── Guardar ──────────────────────────────────────────────
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -410,7 +428,7 @@ def _agregar_capa_rios(mapa: folium.Map) -> None:
     datos = None
     try:
         from .river_network import obtener_capa_rios_geojson
-        datos = obtener_capa_rios_geojson()
+        datos = obtener_capa_rios_geojson(tolerancia=0.0008)
     except Exception as exc:  # módulo ausente o error de lectura
         print(f"  [!] Capa de ríos no disponible: {exc}")
     if not datos or not datos.get("features"):
@@ -611,8 +629,8 @@ def _agregar_leyenda(mapa: folium.Map) -> None:
         ("#1565C0", "Fluvial (punteada)", "10 8"), ("#757575", "Acceso local", None),
         ("#E65100", "Terrestre", None), ("#1E88E5", "Río real", None),
     ]
-    h = ('<div style="position:fixed; bottom:30px; right:10px; z-index:1000;'
-         'background:white; padding:12px 16px; border-radius:8px;'
+    h = ('<div id="folium-legend-card" style="position:fixed; bottom:30px; right:10px; z-index:1000;'
+         'background:white; color:#1d1d1f; padding:12px 16px; border-radius:8px;'
          'box-shadow:0 2px 6px rgba(0,0,0,0.3); font-family:Arial;'
          'font-size:12px; line-height:20px;"><b>Leyenda</b><br>')
     for c, l in nodos:
@@ -649,13 +667,13 @@ def _agregar_panel_itinerarios(mapa, grafo, itinerarios) -> None:
             f"<td align='right'>{it.perdida_pct:.1f}%</td></tr>"
         )
     h = (
-        '<div style="position:fixed; top:80px; left:10px; z-index:1000;'
-        'background:white; padding:8px 12px; border-radius:8px;'
+        '<div id="folium-itin-card" style="position:fixed; top:80px; left:10px; z-index:1000;'
+        'background:white; color:#1d1d1f; padding:8px 12px; border-radius:8px;'
         'box-shadow:0 2px 6px rgba(0,0,0,0.3); font-family:Arial;'
         'font-size:11px; max-height:60vh; overflow:auto;">'
         '<details open><summary><b>📋 Itinerarios por punto de pesca</b></summary>'
-        '<table style="border-collapse:collapse;margin-top:4px;" cellpadding="3">'
-        '<tr style="background:#eee;"><th>Origen</th><th>Acopio</th>'
+        '<table style="border-collapse:collapse;margin-top:4px;color:#1d1d1f;" cellpadding="3">'
+        '<tr style="background:#eee;color:#1d1d1f;"><th>Origen</th><th>Acopio</th>'
         '<th>Centro</th><th>km</th><th>h</th><th>% pérdida</th></tr>'
         f'{filas}</table></details></div>'
     )
@@ -664,82 +682,161 @@ def _agregar_panel_itinerarios(mapa, grafo, itinerarios) -> None:
 
 def _agregar_puntos_campo(mapa: folium.Map) -> None:
     """
-    Carga los puntos de campo desde data/geojson/puntos_campo.geojson
-    y los agrega como capas categorizadas al mapa.
-
-    Categorías:
-      A — Acopio (naranja)
-      D — Deterioro (rojo)
-      H — Hábitat (verde)
-      M — Muelle (azul)
-      V — Venta (púrpura)
+    Carga los 49 puntos de campo desde data/geojson/puntos_campo.geojson,
+    calcula su corredor de navegación en lancha sobre la red fluvial real (rios.shp)
+    incluyendo condiciones de cuesta del río (aguas abajo vs. cuesta arriba contra corriente)
+    y los agrega como capas activas al mapa interactivo.
     """
-    geojson_path = _GEOJSON_DIR / "puntos_campo.geojson"
-    if not geojson_path.exists():
-        return
-
     try:
-        with open(geojson_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except (json.JSONDecodeError, IOError):
-        return
+        from .river_network import calcular_corredor_fluvial_puntos_campo
+        corredor = calcular_corredor_fluvial_puntos_campo()
+    except Exception:
+        corredor = {"puntos": [], "tramos": []}
 
-    features = data.get("features", [])
-    if not features:
+    puntos = corredor.get("puntos", [])
+    if not puntos:
         return
 
     # Configuración visual por categoría
     categorias_config = {
-        "A": {"nombre": "📦 Puntos de Acopio (campo)",    "color": "#F39C12", "icono": "warehouse"},
-        "D": {"nombre": "🌡️ Zonas de Deterioro (campo)", "color": "#E74C3C", "icono": "warning"},
-        "H": {"nombre": "🌿 Hábitat Protegido (campo)",   "color": "#27AE60", "icono": "leaf"},
-        "M": {"nombre": "⚓ Muelles (campo)",             "color": "#3498DB", "icono": "anchor"},
-        "V": {"nombre": "🏪 Puntos de Venta (campo)",     "color": "#8E44AD", "icono": "shop"},
+        "A": {"nombre": "📦 Puntos de Acopio (campo — conectado por río)",    "color": "#F39C12", "icono": "warehouse"},
+        "D": {"nombre": "🌡️ Zonas de Deterioro (campo — conectado por río)", "color": "#E74C3C", "icono": "warning"},
+        "H": {"nombre": "🌿 Hábitat Protegido (campo — referencia fluvial)",  "color": "#27AE60", "icono": "leaf"},
+        "M": {"nombre": "⚓ Muelles (campo — conectado por río)",             "color": "#3498DB", "icono": "anchor"},
+        "V": {"nombre": "🏪 Puntos de Venta (campo — conectado por río)",     "color": "#8E44AD", "icono": "shop"},
     }
 
-    # Agrupar features por categoría
-    grupos: Dict[str, list] = {}
-    for feat in features:
-        cat = feat.get("properties", {}).get("categoria", "?")
-        grupos.setdefault(cat, []).append(feat)
+    # 1. Capa de recorridos en lancha por la Red Fluvial real (rios.shp)
+    capa_rutas_campo = folium.FeatureGroup(
+        name="🚤 Recorridos en Lancha — Red Fluvial de Campo (49 puntos, rios.shp)",
+        show=True,
+    )
 
-    # Crear una capa por categoría
-    for cat, feats in sorted(grupos.items()):
+    for p in puntos:
+        coords_ll = p.get("coords_latlon", [])
+        if len(coords_ll) < 2:
+            continue
+        cond_cuesta = str(p.get("condicion_cuesta_rio", ""))
+        if "Aguas abajo" in cond_cuesta:
+            color_linea = "#0096C7"  # Azul cian intenso: a favor de la corriente
+            dash_pat = "8 5"
+        elif "Cuesta arriba" in cond_cuesta:
+            color_linea = "#E67E22"  # Ámbar naranja: remontando contra corriente
+            dash_pat = "6 6"
+        else:
+            color_linea = "#2980B9"
+            dash_pat = "8 6"
+
+        tramo_popup = (
+            f"<div style='font-family:Segoe UI,sans-serif;font-size:12px;line-height:1.45;'>"
+            f"<b>🚤 Tramo Fluvial en Lancha: {p['id']} → {p['destino_relevo_id']}</b><br>"
+            f"<b>Origen:</b> {p['title']} ({p['cota_origen_msnm']} m s.n.m.)<br>"
+            f"<b>Relevo destino:</b> {p['destino_relevo_nombre']} ({p['cota_destino_msnm']} m s.n.m.)<br>"
+            f"<hr style='margin:4px 0'>"
+            f"<b>Distancia por río real (rios.shp):</b> {p['distancia_tramo_rio_km']} km "
+            f"(sinuosidad {p['indice_sinuosidad']}×)<br>"
+            f"<b>Distancia total a Pto. Gaitán (M03):</b> {p['distancia_total_a_m03_km']} km<br>"
+            f"<b>Condición de cuesta del río:</b> {cond_cuesta}<br>"
+            f"<b>Desnivel a M03:</b> {p['desnivel_a_m03_m']:+.1f} m "
+            f"(pendiente {p['pendiente_m_km']} m/km)<br>"
+            f"<b>Corriente fluvial:</b> {p['velocidad_corriente_kmh']:+.1f} km/h | "
+            f"<b>Velocidad lancha:</b> {p['velocidad_lancha_ida_kmh']} km/h<br>"
+            f"<b>Tiempo tramo:</b> {p['tiempo_tramo_h']} h ({p['tiempo_tramo_min']} min) | "
+            f"<b>Total a M03:</b> {p['tiempo_total_a_m03_h']} h<br>"
+            f"<b>Gasolina a M03:</b> {p['galones_gasolina']} gal (${p['costo_combustible_cop']:,.0f} COP)<br>"
+            f"<b>Pérdida térmica sin hielo (30 °C):</b> <span style='color:#c0392b;font-weight:700;'>"
+            f"{p['perdida_sin_hielo_pct']}%</span> vs. "
+            f"<b>con hielo 1:1 (0 °C):</b> <span style='color:#27ae60;font-weight:700;'>"
+            f"{p['perdida_con_hielo_1a1_pct']}%</span>"
+            f"</div>"
+        )
+        folium.PolyLine(
+            locations=coords_ll,
+            color=color_linea,
+            weight=3.2,
+            opacity=0.82,
+            dash_array=dash_pat,
+            popup=folium.Popup(tramo_popup, max_width=340),
+            tooltip=(
+                f"🚤 {p['id']} → {p['destino_relevo_id']} ({p['distancia_tramo_rio_km']} km río | "
+                f"{cond_cuesta} | {p['tiempo_tramo_h']} h)"
+            ),
+        ).add_to(capa_rutas_campo)
+
+    capa_rutas_campo.add_to(mapa)
+
+    # 2. Agrupar puntos por categoría y crear sus marcadores con popup completo
+    grupos: Dict[str, list] = {}
+    for p in puntos:
+        cat = str(p.get("categoria", "?"))
+        grupos.setdefault(cat, []).append(p)
+
+    for cat, lista_pts in sorted(grupos.items()):
         config = categorias_config.get(cat, {
             "nombre": f"❓ {cat} (campo)",
             "color": "#757575",
             "icono": "circle",
         })
 
-        capa = folium.FeatureGroup(name=config["nombre"], show=False)
+        capa = folium.FeatureGroup(name=config["nombre"], show=True)
 
-        for feat in feats:
-            props = feat.get("properties", {})
-            coords = feat.get("geometry", {}).get("coordinates", [0, 0])
-            lat, lon = coords[1], coords[0]  # GeoJSON es [lon, lat]
-
-            # Popup HTML informativo
+        for p in lista_pts:
+            lat, lon = float(p["latitud"]), float(p["longitud"])
             popup_html = (
-                f"<b>{props.get('title', props.get('id', ''))}</b><br>"
-                f"<i>{props.get('tipo', cat)}</i><br>"
-                f"📍 {props.get('lat_dms', f'{lat:.4f}')}, "
-                f"{props.get('lon_dms', f'{lon:.4f}')}"
+                f"<div style='font-family:Segoe UI,sans-serif;font-size:12px;line-height:1.45;'>"
+                f"<b>{p['title']}</b><br>"
+                f"<i>{p['tipo']} · Cota cauce: {p['cota_origen_msnm']} m s.n.m.</i><br>"
+                f"📍 {p['lat_dms']}, {p['lon_dms']}<br>"
+                f"<hr style='margin:5px 0'>"
+                f"<b>🌊 Conexión por Red Fluvial (rios.shp):</b><br>"
+                f"• <b>Ruta de relevo:</b> {p['id']} ──río──► <b>{p['destino_relevo_id']}</b> ──► <b>M03 (Pto. Gaitán)</b><br>"
+                f"• <b>Distancia tramo río:</b> {p['distancia_tramo_rio_km']} km (recta: {p['distancia_recta_km']} km, "
+                f"meandros {p['indice_sinuosidad']}×)<br>"
+                f"• <b>Distancia fluvial total a M03:</b> <b>{p['distancia_total_a_m03_km']} km</b> "
+                f"(acceso al cauce: {p['distancia_al_cauce_km']} km)<br>"
+                f"<hr style='margin:5px 0'>"
+                f"<b>⛰️ Condición de Cuesta del Río y Lancha (40 HP):</b><br>"
+                f"• <b>Régimen hidráulico:</b> {p['condicion_cuesta_rio']}<br>"
+                f"• <b>Desnivel hacia M03:</b> {p['desnivel_a_m03_m']:+.1f} m "
+                f"({p['cota_origen_msnm']} → {p['cota_m03_msnm']} m s.n.m., {p['pendiente_m_km']} m/km)<br>"
+                f"• <b>Velocidad corriente:</b> {p['velocidad_corriente_kmh']:+.1f} km/h | "
+                f"<b>Esfuerzo motor:</b> {p['esfuerzo_motor']}<br>"
+                f"• <b>Velocidad lancha (ida / retorno con hielo):</b> "
+                f"{p['velocidad_lancha_ida_kmh']} km/h / {p['velocidad_lancha_retorno_kmh']} km/h<br>"
+                f"• <b>Tiempo navegación en lancha:</b> {p['tiempo_tramo_h']} h al relevo | "
+                f"<b>{p['tiempo_total_a_m03_h']} h ({p['tiempo_total_a_m03_min']} min) total a M03</b><br>"
+                f"<hr style='margin:5px 0'>"
+                f"<b>❄️ Variables de Frío, Combustible e Inocuidad FAO:</b><br>"
+                f"• <b>Combustible lancha a M03:</b> {p['galones_gasolina']} gal "
+                f"(<b>${p['costo_combustible_cop']:,.0f} COP</b>)<br>"
+                f"• <b>Hielo 1:1 requerido (lote {p['lote_referencia_kg']:.0f} kg):</b> "
+                f"{p['hielo_requerido_1a1_kg']:.0f} kg hielo en escarcha<br>"
+                f"• <b>Merma a 30 °C (sin hielo):</b> "
+                f"<span style='color:#c0392b;font-weight:700;'>{p['perdida_sin_hielo_pct']}%</span> "
+                f"vs. <b>con hielo 1:1 (0 °C):</b> "
+                f"<span style='color:#27ae60;font-weight:700;'>{p['perdida_con_hielo_1a1_pct']}%</span><br>"
+                f"• <b>Diagnóstico FAO (4.0 h):</b> <b>{p['estado_fao_sin_hielo']}</b>"
+                f"</div>"
             )
 
             folium.CircleMarker(
                 location=[lat, lon],
-                radius=6,
-                color=config["color"],
+                radius=7,
+                color="#111111",
                 fill=True,
                 fill_color=config["color"],
-                fill_opacity=0.7,
+                fill_opacity=0.9,
                 weight=2,
-                popup=folium.Popup(popup_html, max_width=250),
-                tooltip=props.get("title", props.get("id", "")),
+                popup=folium.Popup(popup_html, max_width=360),
+                tooltip=(
+                    f"{p['title']} | Río a {p['destino_relevo_id']}: {p['distancia_tramo_rio_km']} km "
+                    f"(Total a M03: {p['distancia_total_a_m03_km']} km, {p['tiempo_total_a_m03_h']} h, "
+                    f"{p['condicion_cuesta_rio']})"
+                ),
             ).add_to(capa)
 
         capa.add_to(mapa)
 
-    print(f"  [✓] {len(features)} puntos de campo cargados "
+    print(f"  [✓] {len(puntos)} puntos de campo cargados y conectados por red fluvial "
           f"({', '.join(f'{k}:{len(v)}' for k, v in sorted(grupos.items()))})")
 

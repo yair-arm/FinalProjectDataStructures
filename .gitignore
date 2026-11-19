@@ -41,11 +41,18 @@ htmlcov/
 # Datos generados
 data/output/*
 !data/output/.gitkeep
-!data/output/rutas_cache.json
+!data/output/presentacion_red_logistica.html
 !data/output/mapa_interactivo.html
-!data/output/grafo_logistico.png
-!Codigo_Proyecto_Final_Grafos.rar
+!data/output/rutas_cache.json
 
-# Logs
+# Logs y temporales LaTeX
 *.log
+*.aux
+*.out
+Informe_IEEE/page_*.png
 
+
+
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
+.playwright-mcp/
