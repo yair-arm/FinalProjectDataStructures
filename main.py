@@ -35,6 +35,8 @@ sys.path.insert(0, BASE_DIR)
 from src.models.nodo import Nodo
 from src.models.arista import Arista
 from src.models.grafo_logistico import GrafoLogistico
+from src.algorithms.bfs import bfs_recorrido, bfs_camino, bfs_nodo_mas_cercano_por_tipo
+from src.algorithms.dfs import dfs_recorrido, dfs_todos_los_caminos, dfs_resumen_rutas
 from src.algorithms.dijkstra import dijkstra, dijkstra_completo
 from src.algorithms.floyd_warshall import floyd_warshall, reconstruir_camino, matriz_a_tabla
 from src.algorithms.bellman_ford import bellman_ford, reconstruir_camino_bf
@@ -182,13 +184,74 @@ def _cargar_datos_ejemplo(grafo: GrafoLogistico):
 
 
 # ═══════════════════════════════════════════════════════════════
-#  PASO 2: ALGORITMOS DE CAMINOS MÍNIMOS
+#  PASO 2A & 2B: RECORRIDOS FUNDAMENTALES (BFS Y DFS)
+# ═══════════════════════════════════════════════════════════════
+
+def ejecutar_bfs(grafo: GrafoLogistico):
+    """Ejecuta BFS para resolver la Incógnita 1: menor número de saltos a acopio o frío."""
+    print("\n" + "═" * 60)
+    print("  PASO 2A: BFS — BÚSQUEDA EN AMPLITUD (INCÓGNITA 1)")
+    print("  (Alcanzabilidad y menor número de saltos topológicos a acopio/frío)")
+    print("═" * 60)
+
+    pesca = grafo.puntos_pesca()
+    if not pesca:
+        print("  [!] No hay puntos de pesca cargados.")
+        return
+
+    cubiertos_2_saltos = 0
+    print(f"  {'Punto de Pesca':<22} {'Objetivo':<16} {'Saltos':<8} {'Ruta Topológica (BFS)'}")
+    print("  " + "─" * 60)
+    for p in pesca:
+        nodo_dest, saltos, camino = bfs_nodo_mas_cercano_por_tipo(
+            grafo, p.id, tipos_objetivo=("A", "F"), evitar_restringidos=True
+        )
+        if nodo_dest and saltos >= 0:
+            dest_nombre = grafo.obtener_nodo(nodo_dest).nombre if grafo.obtener_nodo(nodo_dest) else nodo_dest
+            print(f"  {p.nombre:<22} {dest_nombre:<16} {saltos:<8} {' → '.join(camino)}")
+            if saltos <= 2:
+                cubiertos_2_saltos += 1
+        else:
+            print(f"  {p.nombre:<22} {'Sin ruta':<16} {'--':<8} Sin conectividad")
+
+    pct = (cubiertos_2_saltos / len(pesca)) * 100 if pesca else 0
+    print("  " + "─" * 60)
+    print(f"  [✓] Incógnita 1 Resuelta: {cubiertos_2_saltos}/{len(pesca)} puntos ({pct:.1f}%) a ≤ 2 saltos de acopio/frío.")
+
+
+def ejecutar_dfs(grafo: GrafoLogistico):
+    """Ejecuta DFS para resolver la Incógnita 2: exploración de itinerarios con backtracking."""
+    print("\n" + "═" * 60)
+    print("  PASO 2B: DFS — BÚSQUEDA EN PROFUNDIDAD (INCÓGNITA 2)")
+    print("  (Exploración exhaustiva de caminos simples ribereños hacia mercados)")
+    print("═" * 60)
+
+    pesca = grafo.puntos_pesca()
+    mercados = grafo.mercados()
+    if not pesca or not mercados:
+        print("  [!] No hay suficientes nodos.")
+        return
+
+    destino = mercados[0].id
+    print(f"  Explorando rutas exhaustivas con retroceso (backtracking) hacia {mercados[0].nombre}:")
+    for p in pesca[:3]:  # Muestra representativo para mantener la consola legible
+        resumen = dfs_resumen_rutas(grafo, p.id, destino, evitar_restringidos=True)
+        print(f"\n  📍 Desde {p.nombre} ({len(resumen)} rutas posibles encontradas por DFS):")
+        for i, r in enumerate(resumen[:2], 1):
+            print(f"     Opción {i} ({r['saltos']} saltos, {r['tiempo_h']:.2f} h, {r['distancia_km']:.1f} km): {' → '.join(r['camino'])}")
+
+    print("\n  [✓] Incógnita 2 Resuelta: DFS identifica todas las alternativas topológicas de salida.")
+
+
+# ═══════════════════════════════════════════════════════════════
+#  PASO 2C: ALGORITMOS DE CAMINOS MÍNIMOS (DIJKSTRA)
 # ═══════════════════════════════════════════════════════════════
 
 def ejecutar_dijkstra(grafo: GrafoLogistico):
     """Ejecuta Dijkstra entre puntos clave."""
     print("\n" + "═" * 60)
-    print("  PASO 2: DIJKSTRA — CAMINOS MÍNIMOS")
+    print("  PASO 2C: DIJKSTRA — CAMINOS MÍNIMOS PONDERADOS")
+    print("  (Optimización multicriterio y cota dura de inocuidad de 4.0 h)")
     print("═" * 60)
 
     pesca = grafo.puntos_pesca()
@@ -541,7 +604,13 @@ def main():
     grafo = cargar_datos()
     print(grafo.resumen())
 
-    # 2. Dijkstra
+    # 2A. BFS — Búsqueda en Amplitud (Incógnita 1)
+    ejecutar_bfs(grafo)
+
+    # 2B. DFS — Búsqueda en Profundidad (Incógnita 2)
+    ejecutar_dfs(grafo)
+
+    # 2C. Dijkstra — Caminos Mínimos Ponderados y Cota de Inocuidad
     ejecutar_dijkstra(grafo)
 
     # 3. Floyd-Warshall

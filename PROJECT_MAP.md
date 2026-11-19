@@ -1,26 +1,28 @@
 # PROJECT_MAP.md — Mapa Sintáctico Automático (AST Repo-Map)
 
-> **Generado automáticamente:** `2026-11-18 19:05` vía `scripts/generar_repo_map.py`  
+> **Generado automáticamente:** `2026-11-18 19:30` vía `scripts/generar_repo_map.py`  
 > **Propósito:** Permite a cualquier agente de Antigravity navegar clases, firmas y líneas exactas sin abrir archivos completos ni desperdiciar tokens.
-> **Compresión de contexto:** `13,563` líneas de código Python condensadas en `314` líneas (**97.7% de ahorro**).
+> **Compresión de contexto:** `13,632` líneas de código Python condensadas en `317` líneas (**97.7% de ahorro**).
 
 
 ## 1. Arquitectura Python (Firmas y Rangos de Línea)
 
-### `main.py` (`632` líneas) — OPTIMIZACIÓN DE CENTROS DE REFRIGERACIÓN PARA PESCA ARTESANAL
+### `main.py` (`701` líneas) — OPTIMIZACIÓN DE CENTROS DE REFRIGERACIÓN PARA PESCA ARTESANAL
 - **Constantes:** `BASE_DIR (L32)`
-- `def cargar_datos() -> GrafoLogistico` `[L56-L164]` — Construye el grafo logístico completo a partir de los CSV.
-- `def _cargar_datos_ejemplo(grafo: GrafoLogistico)` `[L167-L181]` — Carga datos de ejemplo si no existen los CSV.
-- `def ejecutar_dijkstra(grafo: GrafoLogistico)` `[L188-L221]` — Ejecuta Dijkstra entre puntos clave.
-- `def ejecutar_bellman_ford(grafo: GrafoLogistico)` `[L224-L280]` — Ejecuta Bellman-Ford y verifica consistencia con Dijkstra.
-- `def ejecutar_floyd_warshall(grafo: GrafoLogistico)` `[L283-L304]` — Ejecuta Floyd-Warshall y muestra la matriz.
-- `def ejecutar_localizacion(grafo: GrafoLogistico)` `[L311-L323]` — Resuelve el problema de localización de instalaciones.
-- `def ejecutar_simulacion(grafo: GrafoLogistico)` `[L330-L353]` — Simula la cadena de frío para la ruta más larga.
-- `def ejecutar_itinerarios(grafo: GrafoLogistico)` `[L360-L391]` — Calcula e imprime los itinerarios por punto de pesca hacia Bogotá y V_PG1.
-- `def ejecutar_comparacion(grafo: GrafoLogistico)` `[L398-L481]` — Compara escenarios con y sin centros de frío.
-- `def ejecutar_soluciones_eca(grafo: GrafoLogistico)` `[L484-L488]` — Ejecuta y muestra las 6 soluciones algorítmicas de la ECA (C05-01-2026-003).
-- `def ejecutar_visualizacion(grafo: GrafoLogistico)` `[L495-L524]` — Genera la visualización del grafo.
-- `def main()` `[L531-L627]` — Flujo principal del programa.
+- `def cargar_datos() -> GrafoLogistico` `[L58-L166]` — Construye el grafo logístico completo a partir de los CSV.
+- `def _cargar_datos_ejemplo(grafo: GrafoLogistico)` `[L169-L183]` — Carga datos de ejemplo si no existen los CSV.
+- `def ejecutar_bfs(grafo: GrafoLogistico)` `[L190-L219]` — Ejecuta BFS para resolver la Incógnita 1: menor número de saltos a acopio o frío.
+- `def ejecutar_dfs(grafo: GrafoLogistico)` `[L222-L243]` — Ejecuta DFS para resolver la Incógnita 2: exploración de itinerarios con backtracking.
+- `def ejecutar_dijkstra(grafo: GrafoLogistico)` `[L250-L284]` — Ejecuta Dijkstra entre puntos clave.
+- `def ejecutar_bellman_ford(grafo: GrafoLogistico)` `[L287-L343]` — Ejecuta Bellman-Ford y verifica consistencia con Dijkstra.
+- `def ejecutar_floyd_warshall(grafo: GrafoLogistico)` `[L346-L367]` — Ejecuta Floyd-Warshall y muestra la matriz.
+- `def ejecutar_localizacion(grafo: GrafoLogistico)` `[L374-L386]` — Resuelve el problema de localización de instalaciones.
+- `def ejecutar_simulacion(grafo: GrafoLogistico)` `[L393-L416]` — Simula la cadena de frío para la ruta más larga.
+- `def ejecutar_itinerarios(grafo: GrafoLogistico)` `[L423-L454]` — Calcula e imprime los itinerarios por punto de pesca hacia Bogotá y V_PG1.
+- `def ejecutar_comparacion(grafo: GrafoLogistico)` `[L461-L544]` — Compara escenarios con y sin centros de frío.
+- `def ejecutar_soluciones_eca(grafo: GrafoLogistico)` `[L547-L551]` — Ejecuta y muestra las 6 soluciones algorítmicas de la ECA (C05-01-2026-003).
+- `def ejecutar_visualizacion(grafo: GrafoLogistico)` `[L558-L587]` — Genera la visualización del grafo.
+- `def main()` `[L594-L696]` — Flujo principal del programa.
 
 ### `src/algorithms/bellman_ford.py` (`104` líneas) — bellman_ford.py — Algoritmo de Bellman-Ford para caminos mínimos.
 - `def bellman_ford(grafo: GrafoLogistico, origen: str, criterio: str = 'peso', evitar_restringidos: bool = False) -> Tuple[Dict[str, float], Dict[str, Optional[str]], bool]` `[L16-L87]` — Ejecuta Bellman-Ford desde un nodo origen.
@@ -304,9 +306,10 @@
 | `data/shapefiles/rios.shx` | 33.2 KB | Geometría SIG fluvial — procesar vía `route_geometry.py` |
 | `data/output/aristas_resultado.csv` | 6.6 KB | Archivo binario/generado — no leer completo |
 | `data/output/grafo_logistico.png` | 191.0 KB | Archivo binario/generado — no leer completo |
-| `data/output/mapa_interactivo.html` | 3.56 MB | HTML generado por pipeline — editar en `src/visualization/` |
+| `data/output/mapa_interactivo.html` | 3.58 MB | HTML generado por pipeline — editar en `src/visualization/` |
 | `data/output/nodos_red.geojson` | 13.8 KB | GeoJSON (25 features) — consultar vía script |
 | `data/output/nodos_resultado.csv` | 2.4 KB | Archivo binario/generado — no leer completo |
+| `data/output/presentacion_red_logistica.backup.html` | 787.1 KB | HTML generado por pipeline — editar en `src/visualization/` |
 | `data/output/presentacion_red_logistica.html` | 787.1 KB | HTML generado por pipeline — editar en `src/visualization/` |
 | `data/output/rios.zip` | 3.15 MB | Geometría SIG fluvial — procesar vía `route_geometry.py` |
 | `data/output/ruta_dijkstra.geojson` | 4.2 KB | GeoJSON (5 features) — consultar vía script |
